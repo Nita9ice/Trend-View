@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="trendveiw">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <title>trendveiw</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+  <!-- ✅ Firebase SDK and Initialization -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCKNKjNHat1YU4bC3OUCiEIAOuNJteCMK4",
+      authDomain: "trend-veiw.firebaseapp.com",
+      projectId: "trend-veiw",
+      storageBucket: "trend-veiw.firebasestorage.app",
+      messagingSenderId: "436897927338",
+      appId: "1:436897927338:web:1e02023e8923cb8049c0d3"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Optional: Log to confirm setup
+    console.log("Firebase initialized", { auth, db });
+  </script>
+
+  <!-- Flutter app bootstrap -->
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+
+</html>

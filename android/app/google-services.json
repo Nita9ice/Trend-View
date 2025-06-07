@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "436897927338",
+    "project_id": "trend-veiw",
+    "storage_bucket": "trend-veiw.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436897927338:android:fa62fdd2c0ceb72049c0d3",
+        "android_client_info": {
+          "package_name": "com.erhonseleanita.trendveiw"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "436897927338-l88nsnu5t53p1i9sm4oc6l2q0pjejlq8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.erhonseleanita.trendveiw",
+            "certificate_hash": "57094f3f1738ff78144ee8af8411d9203af3957c"
+          }
+        },
+        {
+          "client_id": "436897927338-qu61c8mstvkb8rpu250iclkl1a0dq0d0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXMbq-W32y2sVfR59lXtJ18W0Q_UjY_so"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "436897927338-qu61c8mstvkb8rpu250iclkl1a0dq0d0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
