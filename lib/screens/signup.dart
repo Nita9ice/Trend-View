@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/components/buttton.dart';
 import 'package:trendveiw/components/text_field.dart';
+import 'package:trendveiw/services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -18,7 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool showPassword = false;
   bool isLoading = false;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  /* final FirebaseAuth _auth = FirebaseAuth.instance; */
 
   // Basic input validation function
   bool _validateInputs() {
@@ -43,19 +44,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     try {
       // Create user
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(
-            email: emailController.text.trim(),
-            password: passwordController.text,
-          );
+      AuthService().signupUser(emailController.text.trim(), passwordController.text, usernameController.text.trim(),);
 
-      // Update display name (username)
-      await userCredential.user?.updateDisplayName(
-        usernameController.text.trim(),
-      );
 
-      // Send email verification
-      await userCredential.user?.sendEmailVerification();
+
+     
 
       // Navigate to ConfirmEmailScreen
       Navigator.pushNamed(context, '/confirm');
