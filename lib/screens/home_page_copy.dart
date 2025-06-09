@@ -6,13 +6,10 @@ import 'package:trendveiw/components/Widget/trending_movie.dart';
 import 'package:trendveiw/model/movie_model.dart';
 import 'package:trendveiw/screens/movie_screen.dart';
 
-
-
-
 class HomePage extends StatefulWidget {
-   HomePage({super.key});
+  HomePage({super.key});
 
-final List<String> categories = [
+  final List<String> categories = [
     'Trending',
     'Action',
     'Comedy',
@@ -20,7 +17,6 @@ final List<String> categories = [
     'Horror',
     'Sci-Fi',
   ];
-
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -39,8 +35,7 @@ class _HomePageState extends State<HomePage> {
     upcomingMovies = ApiCall().getUpcomingMovies();
   }
 
-
-final List<String> categories = [
+  final List<String> categories = [
     'Trending',
     'Action',
     'Comedy',
@@ -48,10 +43,8 @@ final List<String> categories = [
     'Horror',
     'Sci-Fi',
   ];
-final List<MovieScreen> moviesCat = [
-    
-  ];
-  
+  final List<MovieScreen> moviesCat = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,54 +67,51 @@ final List<MovieScreen> moviesCat = [
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
- // Search bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: const Color.fromRGBO(30, 30, 30, 1),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: TextField(
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  icon: const Icon(Icons.search, color: Colors.white54),
-                  hintText: 'Search movies...',
-                  hintStyle: const TextStyle(color: Colors.white54),
-                  border: InputBorder.none,
+              // Search bar
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(30, 30, 30, 1),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: TextField(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    icon: const Icon(Icons.search, color: Colors.white54),
+                    hintText: 'Search movies...',
+                    hintStyle: const TextStyle(color: Colors.white54),
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
- // Categories horizontal list
-            SizedBox(
-              height: 40,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: categories.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 12),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: (){
-                      
-
-                    },
-                    child: Chip(
-                      label: Text(
-                        categories[index],
-                        style: const TextStyle(color: Colors.white),
+              // Categories horizontal list
+              SizedBox(
+                height: 40,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categories.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {},
+                      child: Chip(
+                        label: Text(
+                          categories[index],
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.pinkAccent,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
                       ),
-                      backgroundColor: Colors.pinkAccent,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
 
               //Trending
               Text(
@@ -131,20 +121,21 @@ final List<MovieScreen> moviesCat = [
                   fontSize: 20,
                 ),
               ),
-              
+
               Divider(),
 
               //Trending View display
               FutureBuilder(
                 future: trendingMovies,
                 builder: (context, snapshot) {
-
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator();
                   } else if (snapshot.hasData) {
-                    return TrendingMovie(snapshot: snapshot, heading: 'Trending Movies',);
+                    return TrendingMovie(
+                      snapshot: snapshot,
+                      heading: 'Trending Movies',
+                    );
                   } else {
-                    
                     return Text('Error ${snapshot.error}');
                   }
                 },
@@ -199,7 +190,7 @@ final List<MovieScreen> moviesCat = [
                   }
                 },
               ),
-              SizedBox(height: 10,)
+              SizedBox(height: 10),
             ],
           ),
         ),

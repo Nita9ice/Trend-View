@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:trendveiw/screens/confirm_email.dart';
 import 'package:trendveiw/screens/edit_profile_screen.dart';
 import 'package:trendveiw/screens/forgot_password.dart';
-import 'package:trendveiw/screens/home_page.dart';
+import 'package:trendveiw/screens/home_screen.dart';
 import 'package:trendveiw/screens/login_screen.dart';
 import 'package:trendveiw/screens/profile_screen.dart';
 import 'package:trendveiw/screens/signup.dart';
@@ -39,7 +39,7 @@ class TrendVeiw extends StatelessWidget {
         '/welcome': (context) => const WelcomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/forgot': (context) => const ForgotPasswordScreen(),
-        '/home': (context) => HomePage(),
+        '/home': (context) => HomeScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/confirm': (context) => const ConfirmEmailScreen(),
         '/profile': (context) => const ProfileScreen(),
