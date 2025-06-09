@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:trendveiw/components/buttton.dart';
 import 'package:trendveiw/components/onboard.dart';
+import 'package:trendveiw/theme/theme_controller.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -15,8 +17,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(18, 18, 18, 1),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(
+              themeController.isDarkMode
+                  ? Icons.dark_mode_outlined
+                  : Icons.light_mode,
+              color: Theme.of(context).iconTheme.color,
+            ),
+            onPressed: () {
+              themeController.toggleThemeMode();
+            },
+            tooltip:
+                themeController.isDarkMode
+                    ? 'Switch to Light Mode'
+                    : 'Switch to Dark Mode',
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [

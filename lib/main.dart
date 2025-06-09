@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:trendveiw/screens/confirm_email.dart';
+import 'package:trendveiw/screens/edit_profile_screen.dart';
 import 'package:trendveiw/screens/forgot_password.dart';
 import 'package:trendveiw/screens/home_page.dart';
 import 'package:trendveiw/screens/login_screen.dart';
@@ -10,6 +11,7 @@ import 'package:trendveiw/screens/signup.dart';
 import 'package:trendveiw/screens/welcome_screen.dart';
 import 'package:trendveiw/splash_screen.dart';
 import 'package:trendveiw/theme/theme_controller.dart';
+import 'package:trendveiw/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,16 +43,13 @@ class TrendVeiw extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/confirm': (context) => const ConfirmEmailScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/edit': (context) => const EditProfileScreen(),
       },
       themeMode: themeController.themeMode,
-      theme: ThemeData.light().copyWith(
-        scaffoldBackgroundColor: Colors.white,
-        // define light theme colors
-      ),
-      darkTheme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color.fromRGBO(18, 18, 18, 1),
-        // define dark theme colors
-      ),
+      // Use the light theme from AppTheme class
+      theme: AppTheme.lightTheme,
+      // Use the dark theme from AppTheme class
+      darkTheme: AppTheme.darkTheme,
     );
   }
 }

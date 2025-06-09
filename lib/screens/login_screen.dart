@@ -19,7 +19,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool showPassword = false;
 
-  // Simple input validation
   bool validateInputs() {
     final email = emailController.text;
     final password = passwordController.text;
@@ -43,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return true;
   }
 
-  // Helper to show messages
   void showSnackBar(String message) {
     ScaffoldMessenger.of(
       context,
@@ -59,8 +57,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(18, 18, 18, 1),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: theme.textTheme.headlineLarge?.color,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   'Login to your account',
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
-                    color: Colors.white70,
+                    color: theme.textTheme.bodyMedium?.color,
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       showPassword ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.white54,
+                      color: theme.iconTheme.color?.withAlpha(140),
                     ),
                     onPressed: () {
                       setState(() {
@@ -121,7 +121,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Forgot Password?',
-                      style: GoogleFonts.montserrat(color: Colors.pinkAccent),
+                      style: GoogleFonts.montserrat(
+                        color: theme.colorScheme.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -142,7 +144,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (userCredential != null) {
                           if (userCredential.user?.emailVerified ?? false) {
                             Navigator.pushNamed(context, '/profile');
-                            // Navigator.pushNamed(context, '/home');
                           } else {
                             showSnackBar(
                               'Please verify your email before logging in.',
@@ -164,7 +165,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       'Don\'t have an account?',
-                      style: GoogleFonts.montserrat(color: Colors.white70),
+                      style: GoogleFonts.montserrat(
+                        color: theme.textTheme.bodyMedium?.color,
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
@@ -173,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         'Create one',
                         style: GoogleFonts.montserrat(
-                          color: Colors.pinkAccent,
+                          color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
