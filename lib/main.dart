@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:trendveiw/screens/confirm_email.dart';
 import 'package:trendveiw/screens/forgot_password.dart';
+import 'package:trendveiw/screens/home_page.dart';
 import 'package:trendveiw/screens/login_screen.dart';
-import 'package:trendveiw/screens/home_screen.dart';
+
 import 'package:trendveiw/screens/signup.dart';
 import 'package:trendveiw/screens/welcome_screen.dart';
 import 'package:trendveiw/splash_screen.dart';
@@ -27,10 +28,15 @@ class TrendVeiw extends StatelessWidget {
         '/welcome': (context) => const WelcomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/forgot': (context) => const ForgotPasswordScreen(),
-        '/home': (context) => HomeScreen(),
+        /* '/home': (context) => HomeScreen(), */
+        '/home': (context) => HomePage(),
         '/signup': (context) => const SignUpScreen(),
         '/confirm': (context) => const ConfirmEmailScreen(),
       },
+      theme: ThemeData.dark().copyWith(
+scaffoldBackgroundColor: Color.fromRGBO(18, 18, 18, 1)
+
+),
     );
   }
 }

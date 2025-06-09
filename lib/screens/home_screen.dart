@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
@@ -90,53 +91,11 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Movies grid
-            Expanded(
-              child: GridView.builder(
-                itemCount: movies.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 18,
-                  crossAxisSpacing: 18,
-                  childAspectRatio: 0.65,
-                ),
-                itemBuilder: (context, index) {
-                  final movie = movies[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Movie poster
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            movie['image']!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      // Movie title
-                      Text(
-                        movie['title']!,
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
+           
           ],
         ),
       ),
     );
   }
 }
+
