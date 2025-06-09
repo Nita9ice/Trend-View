@@ -16,15 +16,35 @@ class MyTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TextField(
       controller: controller,
       obscureText: obscureText,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(
+        color:
+            isDark
+                ? Colors.white
+                : const Color.fromRGBO(0, 0, 0, 1), // Black for light mode
+      ),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.white70),
+        hintStyle: TextStyle(
+          color:
+              isDark
+                  ? Colors.white70
+                  : const Color.fromRGBO(0, 0, 0, 1), // Black for light mode
+        ),
         filled: true,
-        fillColor: const Color.fromRGBO(30, 30, 30, 1),
+        fillColor:
+            isDark
+                ? const Color.fromRGBO(30, 30, 30, 1)
+                : const Color.fromRGBO(
+                  211,
+                  211,
+                  211,
+                  1,
+                ), // Light grey for light mode
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

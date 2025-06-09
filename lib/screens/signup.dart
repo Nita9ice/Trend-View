@@ -19,9 +19,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool showPassword = false;
   bool isLoading = false;
 
-  /* final FirebaseAuth _auth = FirebaseAuth.instance; */
-
-  // Basic input validation function
   bool _validateInputs() {
     if (usernameController.text.isEmpty ||
         emailController.text.isEmpty ||
@@ -31,7 +28,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
       return false;
     }
-    // Add email regex check if you want
     return true;
   }
 
@@ -43,15 +39,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
 
     try {
-      // Create user
-      AuthService().signupUser(emailController.text.trim(), passwordController.text, usernameController.text.trim(),);
+      await AuthService().signupUser(
+        emailController.text.trim(),
+        passwordController.text,
+        usernameController.text.trim(),
+      );
 
-
-
-     
-
-      // Navigate to ConfirmEmailScreen
-      Navigator.pushNamed(context, '/confirm');
+      Navigator.pushNamed(context, '/verify');
     } on FirebaseAuthException catch (e) {
       String message = 'Sign up failed';
       if (e.code == 'email-already-in-use') {
@@ -77,8 +71,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(18, 18, 18, 1),
+      backgroundColor:
+          isDark
+              ? const Color.fromRGBO(18, 18, 18, 1)
+              : const Color.fromRGBO(255, 255, 255, 1),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -87,39 +86,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 60),
-
                 Text(
                   'Create Account',
                   style: GoogleFonts.montserrat(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color:
+                        isDark
+                            ? const Color.fromRGBO(255, 255, 255, 1)
+                            : const Color.fromRGBO(0, 0, 0, 1),
                   ),
                 ),
                 const SizedBox(height: 10),
-
                 Text(
                   'Join us and enjoy trending movies.',
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
-                    color: Colors.white70,
+                    color:
+                        isDark
+                            ? const Color.fromRGBO(255, 255, 255, 0.7)
+                            : const Color.fromRGBO(0, 0, 0, 0.7),
                   ),
                 ),
-
                 const SizedBox(height: 40),
-
-                // Username
                 MyTextField(
                   controller: usernameController,
                   hintText: 'Username',
                 ),
                 const SizedBox(height: 20),
-
-                // Email
                 MyTextField(controller: emailController, hintText: 'Email'),
                 const SizedBox(height: 20),
-
-                // Password
                 MyTextField(
                   controller: passwordController,
                   hintText: 'Password',
@@ -127,7 +123,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       showPassword ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.white54,
+                      color:
+                          isDark
+                              ? Colors.white54
+                              : const Color.fromRGBO(0, 0, 0, 0.6),
                     ),
                     onPressed: () {
                       setState(() {
@@ -136,23 +135,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
-                // Sign Up Button or Loading Indicator
                 isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : MyButton(text: 'Sign Up', onPressed: _signUp),
-
                 const SizedBox(height: 30),
-
-                // Already have account
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       "Already have an account?",
-                      style: GoogleFonts.montserrat(color: Colors.white70),
+                      style: GoogleFonts.montserrat(
+                        color:
+                            isDark
+                                ? const Color.fromRGBO(255, 255, 255, 0.7)
+                                : const Color.fromRGBO(0, 0, 0, 0.6),
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
@@ -161,7 +159,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: Text(
                         "Login",
                         style: GoogleFonts.montserrat(
-                          color: Colors.pinkAccent,
+                          color: const Color.fromRGBO(255, 64, 129, 1),
                           fontWeight: FontWeight.w600,
                         ),
                       ),

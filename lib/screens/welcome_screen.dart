@@ -18,9 +18,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     final themeController = Provider.of<ThemeController>(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -30,7 +31,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               themeController.isDarkMode
                   ? Icons.dark_mode_outlined
                   : Icons.light_mode,
-              color: Theme.of(context).iconTheme.color,
+              color: theme.iconTheme.color,
             ),
             onPressed: () {
               themeController.toggleThemeMode();
@@ -81,8 +82,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               controller: _controller,
               count: 3,
               effect: WormEffect(
-                dotColor: Colors.grey.shade700,
-                activeDotColor: const Color.fromRGBO(255, 64, 129, 1),
+                dotColor: theme.hintColor.withAlpha((0.7 * 255).round()),
+
+                activeDotColor:
+                    theme.colorScheme.secondary, // RGBA(255, 64, 129, 1)
                 dotHeight: 10,
                 dotWidth: 10,
               ),

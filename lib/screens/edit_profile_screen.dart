@@ -19,21 +19,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(18, 18, 18, 1),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: Text("Edit Profile", style: GoogleFonts.montserrat()),
+        elevation: 0,
+        title: Text(
+          "Edit Profile",
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
           onPressed: () => Navigator.pop(context),
         ),
-        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -54,7 +62,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     right: 0,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(255, 64, 129, 1),
+                        color: theme.colorScheme.primary,
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
@@ -64,7 +72,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           size: 20,
                         ),
                         onPressed: () {
-                          //  implement image picker
+                          // implement image picker
                         },
                       ),
                     ),
@@ -82,15 +90,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             MyTextField(controller: _emailController, hintText: 'Email'),
             const SizedBox(height: 20),
 
-            // password field
-            MyTextField(controller: _passwordController, hintText: 'password'),
+            // Password field
+            MyTextField(controller: _passwordController, hintText: 'Password'),
             const Spacer(),
 
             // Save button
             MyButton(
-              text: 'save',
+              text: 'Save',
               onPressed: () {
-                // function to save editted profile
+                // function to save edited profile
               },
             ),
           ],

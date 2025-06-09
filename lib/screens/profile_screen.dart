@@ -7,9 +7,14 @@ import 'package:trendveiw/components/profile_options_tile.dart';
 import 'package:trendveiw/theme/theme_controller.dart';
 import 'package:trendveiw/theme/app_theme.dart'; // Import your AppTheme
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final themeController = Provider.of<ThemeController>(context);
@@ -87,6 +92,14 @@ class ProfileScreen extends StatelessWidget {
             ProfileOptionTile(
               icon: Icons.favorite,
               label: "Favourite",
+              onTap: () {
+                // take me to favourite screen
+                Navigator.pushNamed(context, '/favourite');
+              },
+            ),
+            ProfileOptionTile(
+              icon: Icons.watch_later_outlined,
+              label: "Watch Later",
               onTap: () {},
             ),
             ProfileOptionTile(

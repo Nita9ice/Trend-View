@@ -143,7 +143,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         if (userCredential != null) {
                           if (userCredential.user?.emailVerified ?? false) {
-                            Navigator.pushNamed(context, '/profile');
+                            Navigator.pushNamed(context, '/home');
+                            // Navigator.pushNamed(context, '/profile');
                           } else {
                             showSnackBar(
                               'Please verify your email before logging in.',

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class OnboardItem extends StatelessWidget {
   final IconData icon;
@@ -15,26 +14,34 @@ class OnboardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 100, color: Colors.white),
-          const SizedBox(height: 30),
+          Icon(
+            icon,
+            size: 80,
+            color: theme.iconTheme.color, // Adaptive icon color
+          ),
+          const SizedBox(height: 20),
           Text(
             title,
-            style: GoogleFonts.montserrat(
-              fontSize: 26,
+            style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
           Text(
             description,
-            style: GoogleFonts.montserrat(fontSize: 16, color: Colors.white70),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.textTheme.bodyMedium?.color?.withAlpha(
+                (0.7 * 255).round(),
+              ),
+            ),
             textAlign: TextAlign.center,
           ),
         ],

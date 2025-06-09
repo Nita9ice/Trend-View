@@ -15,8 +15,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(18, 18, 18, 1),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -27,19 +29,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
               Text(
                 'Forgot Password',
-                style: GoogleFonts.montserrat(
-                  fontSize: 28,
+                style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  fontFamily: GoogleFonts.montserrat().fontFamily,
                 ),
               ),
               const SizedBox(height: 10),
 
               Text(
                 'Enter your email address and we\'ll send you a link to reset your password.',
-                style: GoogleFonts.montserrat(
-                  fontSize: 16,
-                  color: Colors.white70,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.textTheme.bodyMedium!.color!.withAlpha(
+                    (0.7 * 255).round(),
+                  ),
+
+                  fontFamily: GoogleFonts.montserrat().fontFamily,
                 ),
               ),
 
@@ -63,9 +67,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   },
                   child: Text(
                     'Back to Login',
-                    style: GoogleFonts.montserrat(
-                      color: Colors.pinkAccent,
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
+                      color: Colors.pinkAccent,
+                      fontFamily: GoogleFonts.montserrat().fontFamily,
                     ),
                   ),
                 ),
