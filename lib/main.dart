@@ -5,7 +5,6 @@ import 'package:trendveiw/screens/forgot_password.dart';
 import 'package:trendveiw/screens/home_page.dart';
 import 'package:trendveiw/screens/login_screen.dart';
 import 'package:trendveiw/screens/profile_screen.dart';
-
 import 'package:trendveiw/screens/signup.dart';
 import 'package:trendveiw/screens/welcome_screen.dart';
 import 'package:trendveiw/splash_screen.dart';

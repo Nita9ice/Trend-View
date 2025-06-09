@@ -16,6 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // Navigate to HomeScreen after 2 seconds
     Future.delayed(const Duration(seconds: 5), () {
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const WelcomeScreen()),

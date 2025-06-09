@@ -51,12 +51,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 30),
 
               // Send Reset Link button
-              MyButton(
-                text: 'Send Reset Link',
-                onPressed: () {
-                  // TODO: Add password reset logic
-                },
-              ),
+              MyButton(text: 'Send Reset Link', onPressed: () {}),
 
               const SizedBox(height: 20),
 

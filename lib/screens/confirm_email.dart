@@ -25,8 +25,10 @@ class _ConfirmEmailScreenState extends State<ConfirmEmailScreen> {
 
     if (user != null && user.emailVerified) {
       // Email is verified, navigate to home
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/home');
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Email not verified yet. Please check your inbox.'),
@@ -43,6 +45,7 @@ class _ConfirmEmailScreenState extends State<ConfirmEmailScreen> {
     try {
       User? user = _auth.currentUser;
       await user?.sendEmailVerification();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Verification email resent. Check your inbox.'),

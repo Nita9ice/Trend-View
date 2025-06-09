@@ -30,50 +30,91 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadUserProfile();
   }
 
-  Future<void> _loadUserProfile() async {
+  Future<void> _loadUserProfile({int retries = 3}) async {
     final user = _auth.currentUser;
-    if (user != null) {
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      setState(() {
-        _email = user.email;
-        _usernameController.text = doc.data()?['username'] ?? '';
-        _imageUrl = doc.data()?['imageUrl'];
-        _isLoading = false;
-      });
+    if (user == null) return;
+
+    int attempt = 0;
+    while (attempt < retries) {
+      try {
+        final doc = await _firestore.collection('users').doc(user.uid).get();
+        if (!mounted) return;
+        setState(() {
+          _email = user.email;
+          _usernameController.text = doc.data()?['username'] ?? '';
+          _imageUrl = doc.data()?['imageUrl'];
+          _isLoading = false;
+        });
+        return; // Success
+      } catch (e) {
+        attempt++;
+        if (attempt >= retries) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to load profile. Please try again later.'),
+            ),
+          );
+          setState(() {
+            _isLoading = false;
+          });
+          return;
+        }
+        await Future.delayed(Duration(seconds: 2 * attempt)); // Backoff
+      }
     }
   }
 
   Future<void> _updateProfile() async {
     final user = _auth.currentUser;
-    if (user != null) {
+    if (user == null) return;
+
+    try {
       await _firestore.collection('users').doc(user.uid).update({
         'username': _usernameController.text.trim(),
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Profile updated')));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to update profile: $e')));
     }
   }
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      File file = File(picked.path);
-      final ref = _storage.ref('profile_images/${_auth.currentUser!.uid}.jpg');
-      await ref.putFile(file);
-      final downloadUrl = await ref.getDownloadURL();
-      await _firestore.collection('users').doc(_auth.currentUser!.uid).update({
-        'imageUrl': downloadUrl,
-      });
-      setState(() {
-        _imageUrl = downloadUrl;
-      });
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked != null) {
+        File file = File(picked.path);
+        final ref = _storage.ref(
+          'profile_images/${_auth.currentUser!.uid}.jpg',
+        );
+        await ref.putFile(file);
+        final downloadUrl = await ref.getDownloadURL();
+        await _firestore.collection('users').doc(_auth.currentUser!.uid).update(
+          {'imageUrl': downloadUrl},
+        );
+        if (!mounted) return;
+        setState(() {
+          _imageUrl = downloadUrl;
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to upload image: $e')));
     }
   }
 
   Future<void> _logout() async {
     await _auth.signOut();
+    if (!mounted) return;
     Navigator.pushReplacementNamed(context, '/login');
   }
 
