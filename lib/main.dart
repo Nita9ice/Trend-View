@@ -34,9 +34,8 @@ class TrendVeiw extends StatelessWidget {
         '/confirm': (context) => const ConfirmEmailScreen(),
       },
       theme: ThemeData.dark().copyWith(
-scaffoldBackgroundColor: Color.fromRGBO(18, 18, 18, 1)
-
-),
+        scaffoldBackgroundColor: Color.fromRGBO(18, 18, 18, 1),
+      ),
     );
   }
 }
