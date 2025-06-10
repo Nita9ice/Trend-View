@@ -19,7 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool showPassword = false;
   bool isLoading = false;
 
-  bool _validateInputs() {
+  bool validateInputs() {
     if (usernameController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.isEmpty) {
@@ -31,8 +31,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return true;
   }
 
-  Future<void> _signUp() async {
-    if (!_validateInputs()) return;
+  Future<void> signUp() async {
+    if (!validateInputs()) return;
 
     setState(() {
       isLoading = true;
@@ -138,7 +138,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 30),
                 isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : MyButton(text: 'Sign Up', onPressed: _signUp),
+                    : MyButton(text: 'Sign Up', onPressed: signUp),
                 const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
