@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trendveiw/components/buttton.dart';
+import 'package:trendveiw/components/dialog_box.dart';
 import 'package:trendveiw/components/text_field.dart';
 import 'package:trendveiw/services/auth_service.dart';
 
@@ -13,7 +15,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -24,28 +25,25 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = passwordController.text;
 
     if (email.isEmpty) {
-      showSnackBar('Please enter your email');
+      DialogBox.showErrorDialog(context, 'Please enter your email');
       return false;
     }
     if (!email.contains('@')) {
-      showSnackBar('Please enter a valid email address');
+      DialogBox.showErrorDialog(context, 'Please enter a valid email address');
       return false;
     }
     if (password.isEmpty) {
-      showSnackBar('Please enter your password');
+      DialogBox.showErrorDialog(context, 'Please enter your password');
       return false;
     }
     if (password.length < 6) {
-      showSnackBar('Password must be at least 6 characters');
+      DialogBox.showErrorDialog(
+        context,
+        'Password must be at least 6 characters',
+      );
       return false;
     }
     return true;
-  }
-
-  void showSnackBar(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -137,8 +135,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (validateInputs()) {
                       try {
                         final userCredential = await _authService.loginUser(
-                          emailController.text,
-                          passwordController.text,
+                          emailController.text.trim(),
+                          passwordController.text.trim(),
                         );
 
                         if (userCredential != null) {
@@ -146,13 +144,30 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.pushNamed(context, '/wrapper');
                             // Navigator.pushNamed(context, '/profile');
                           } else {
-                            showSnackBar(
+                            DialogBox.showInfoDialog(
+                              context,
+                              'Email Verification Required',
                               'Please verify your email before logging in.',
                             );
                           }
                         }
+                      } on FirebaseAuthException catch (e) {
+                        String errorMessage = 'Incorrect email or password';
+
+                        if (e.code == 'user-not-found') {
+                          errorMessage = 'No user found for that email.';
+                        } else if (e.code == 'wrong-password') {
+                          errorMessage = 'Incorrect password provided.';
+                        } else if (e.code == 'invalid-email') {
+                          errorMessage = 'The email address is not valid.';
+                        }
+
+                        DialogBox.showErrorDialog(context, errorMessage);
                       } catch (e) {
-                        showSnackBar('Login failed: ${e.toString()}');
+                        DialogBox.showErrorDialog(
+                          context,
+                          'An unexpected error occurred.',
+                        );
                       }
                     }
                   },

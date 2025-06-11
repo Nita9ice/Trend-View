@@ -1,40 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/API/api_key.dart';
 import 'package:trendveiw/screens/details_page.dart';
 
 class MovieScreen extends StatelessWidget {
-final AsyncSnapshot snapshot;
-final String heading;
-final int futureindex; 
+  final AsyncSnapshot snapshot;
+  final String heading;
+  final int futureindex;
 
   const MovieScreen({
     super.key,
-    required this.snapshot, 
+    required this.snapshot,
     required this.heading,
     required this.futureindex,
-    
   });
 
- 
   @override
   Widget build(BuildContext context) {
-  
+    final theme = Theme.of(context);
 
-    return Expanded(
-      child: GridView.builder(
-        itemCount: snapshot.data[futureindex].length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 18,
-          crossAxisSpacing: 18,
-          childAspectRatio: 0.65,
-        ),
-        itemBuilder: (context, index) {
-          String imagePath = ApiKey.imageBasePath + snapshot.data[futureindex][index].posterPath;
-          String title = snapshot.data[futureindex][index].title;
-          
-         
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor, // RGBA(18, 18, 18, 1)
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: GridView.builder(
+            itemCount: snapshot.data[futureindex].length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 18,
+              crossAxisSpacing: 18,
+              childAspectRatio: 0.65,
+            ),
+            itemBuilder: (context, index) {
+              final movie = snapshot.data[futureindex][index];
+              final imagePath = ApiKey.imageBasePath + movie.posterPath;
+              final title = movie.title;
+
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,33 +62,27 @@ final int futureindex;
                         overView: overView,
                         rating: rating,
                         id: id,
+
                       ),
-                ),
-              );
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(imagePath),
+                    ),
                   ),
-                ),
-              ),
-    
-              const SizedBox(height: 8),
-    
-              // Movie title
-              Text(
-                title,
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          );
-        },
+
+                  const SizedBox(height: 8),
+
+                  // Movie Title
+                  Text(
+                    title,
+                    style: theme.textTheme.bodyMedium!.copyWith(
+                      fontWeight: FontWeight.w600,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    maxLines: 1,
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }

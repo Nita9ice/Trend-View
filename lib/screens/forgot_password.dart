@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/components/buttton.dart';
+import 'package:trendveiw/components/dialog_box.dart';
 import 'package:trendveiw/components/text_field.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -12,6 +14,38 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
+
+  // function to reset password
+  Future<void> sendPasswordResetLink() async {
+    final email = emailController.text.trim();
+
+    if (email.isEmpty) {
+      DialogBox.showInfoDialog(
+        context,
+        'Input Required',
+        'Please enter your email.',
+      );
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (!mounted) return;
+      DialogBox.showSuccessDialog(
+        context,
+        'Password reset link sent! Please check your email.',
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'Something went wrong';
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No user found with that email.';
+      } else if (e.code == 'invalid-email') {
+        errorMessage = 'Invalid email address.';
+      }
+
+      DialogBox.showErrorDialog(context, errorMessage);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +89,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 30),
 
               // Send Reset Link button
-              MyButton(text: 'Send Reset Link', onPressed: () {}),
+              MyButton(
+                text: 'Send Reset Link',
+                onPressed: sendPasswordResetLink,
+              ),
 
               const SizedBox(height: 20),
 

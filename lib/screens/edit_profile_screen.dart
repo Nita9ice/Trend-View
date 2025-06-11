@@ -33,7 +33,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          "Edit Profile",
+          'Edit Profile',
           style: theme.textTheme.titleLarge?.copyWith(
             fontFamily: GoogleFonts.montserrat().fontFamily,
           ),
@@ -45,63 +45,71 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            // Profile Picture with edit icon
-            Center(
-              child: Stack(
-                children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage(
-                      'assets/default_avatar.png',
-                    ), // Replace with Firebase user image later
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                          size: 20,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Profile Picture with edit icon
+              Center(
+                child: Stack(
+                  children: [
+                    const CircleAvatar(
+                      radius: 50,
+                      backgroundImage: AssetImage(
+                        'assets/default_avatar.png',
+                      ), // Replace with Firebase user image later
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary,
+                          shape: BoxShape.circle,
                         ),
-                        onPressed: () {
-                          // implement image picker
-                        },
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            // implement image picker
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 30),
+              const SizedBox(height: 30),
 
-            // Username field
-            MyTextField(controller: _usernameController, hintText: 'Username'),
-            const SizedBox(height: 20),
+              // Username field
+              MyTextField(
+                controller: _usernameController,
+                hintText: 'Username',
+              ),
+              const SizedBox(height: 20),
 
-            // Email field
-            MyTextField(controller: _emailController, hintText: 'Email'),
-            const SizedBox(height: 20),
+              // Email field
+              MyTextField(controller: _emailController, hintText: 'Email'),
+              const SizedBox(height: 20),
 
-            // Password field
-            MyTextField(controller: _passwordController, hintText: 'Password'),
-            const Spacer(),
+              // Password field
+              MyTextField(
+                controller: _passwordController,
+                hintText: 'Password',
+              ),
+              const SizedBox(height: 200),
 
-            // Save button
-            MyButton(
-              text: 'Save',
-              onPressed: () {
-                // function to save edited profile
-              },
-            ),
-          ],
+              // Save button
+              MyButton(
+                text: 'Save',
+                onPressed: () {
+                  // function to save edited profile
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trendveiw/components/Widget/edit_profile_button.dart';
+import 'package:trendveiw/components/edit_profile_button.dart';
 import 'package:trendveiw/components/profile_options_tile.dart';
 import 'package:trendveiw/theme/app_theme.dart';
 import 'package:trendveiw/theme/theme_controller.dart';
@@ -42,7 +42,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.settings, color: iconColor),
-            onPressed: () {},
+            onPressed: () {
+              // take me to settings screen
+              Navigator.pushNamed(context, '/settings');
+            },
           ),
         ],
         title: Text('Profile', style: TextStyle(color: textColor)),
@@ -90,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // List Options
             ProfileOptionTile(
               icon: Icons.favorite,
-              label: "Favourite",
+              label: 'Favourite',
               onTap: () {
                 // take me to favourite screen
                 Navigator.pushNamed(context, '/favourite');
@@ -98,48 +101,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             ProfileOptionTile(
               icon: Icons.watch_later_outlined,
-              label: "Watch Later",
+              label: 'Watch Later',
               onTap: () {},
             ),
             ProfileOptionTile(
               icon: Icons.download,
-              label: "Downloads",
+              label: 'Downloads',
               onTap: () {},
             ),
             Divider(color: dividerColor),
-            ProfileOptionTile(
-              icon: Icons.language,
-              label: "Languages",
-              onTap: () {},
-            ),
+
             ProfileOptionTile(
               icon: Icons.display_settings,
-              label: "Display",
+              label: 'Display',
               onTap: () {},
             ),
             ProfileOptionTile(
               icon: Icons.subscriptions,
-              label: "Subscription",
+              label: 'Subscription',
               onTap: () {},
             ),
             Divider(color: dividerColor),
             ProfileOptionTile(
               icon: Icons.cached,
-              label: "Clear Cache",
+              label: 'Clear Cache',
               onTap: () {},
             ),
             ProfileOptionTile(
               icon: Icons.history,
-              label: "Clear History",
+              label: 'Clear History',
               onTap: () {},
-            ),
-
-            // Theme Toggle
-            SwitchListTile(
-              secondary: Icon(Icons.brightness_6, color: iconColor),
-              title: Text("Dark Mode", style: TextStyle(color: textColor)),
-              value: isDark,
-              onChanged: (val) => themeController.toggleTheme(val),
             ),
 
             const SizedBox(height: 10),

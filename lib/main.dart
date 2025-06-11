@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:trendveiw/components/util/wrapper_page.dart';
 import 'package:trendveiw/screens/favourite_screen.dart';
+import 'package:trendveiw/screens/settings.dart';
 import 'package:trendveiw/screens/verify_email.dart';
 import 'package:trendveiw/screens/edit_profile_screen.dart';
 import 'package:trendveiw/screens/forgot_password.dart';
@@ -56,6 +57,7 @@ final String initialRoute;
         '/profile': (context) => const ProfileScreen(),
         '/edit': (context) => const EditProfileScreen(),
         '/favourite': (context) => FavouriteScreen(),
+        '/settings': (context) => SettingsScreen(),
       },
       themeMode: themeController.themeMode,
       // Use the light theme from AppTheme class

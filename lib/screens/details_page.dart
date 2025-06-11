@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/API/api_call.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+
 class Details extends StatefulWidget {
   final String heading;
   final int id;
@@ -15,6 +16,7 @@ class Details extends StatefulWidget {
   final String? duration;
 
     Details({
+
     super.key,
     required this.title,
     required this.imagePath,
@@ -46,6 +48,7 @@ late Future<String> movieKey = ApiCall().getMoviesVideo(widget.id);
         centerTitle: true,
         elevation: 0,
       ),
+
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,6 +124,7 @@ late Future<String> movieKey = ApiCall().getMoviesVideo(widget.id);
                         ],
                       ),
                     ],
+
                   ),
                 ),
               ],
@@ -326,6 +330,7 @@ final firstNonNull = values.firstWhere(
           return const Icon(Icons.star_border, color: Colors.amber, size: 18);
         }
       }),
+
     );
   }
 }

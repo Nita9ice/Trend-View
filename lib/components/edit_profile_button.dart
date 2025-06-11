@@ -16,7 +16,7 @@ class EditProfileButton extends StatelessWidget {
       ),
       onPressed: onPressed,
       child: Text(
-        "Edit Profile",
+        'Edit Profile',
         style: GoogleFonts.montserrat(
           color: Colors.white,
           fontSize: 16,

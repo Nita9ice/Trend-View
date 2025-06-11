@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/components/buttton.dart';
+import 'package:trendveiw/components/dialog_box.dart';
 import 'package:trendveiw/components/text_field.dart';
 import 'package:trendveiw/services/auth_service.dart';
 
@@ -19,20 +20,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool showPassword = false;
   bool isLoading = false;
 
-  bool _validateInputs() {
+  bool validateInputs() {
     if (usernameController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
-      );
+      DialogBox.showErrorDialog(context, 'Please fill in all fields');
       return false;
     }
     return true;
   }
 
-  Future<void> _signUp() async {
-    if (!_validateInputs()) return;
+  Future<void> signUp() async {
+    if (!validateInputs()) return;
 
     setState(() {
       isLoading = true;
@@ -45,6 +44,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         usernameController.text.trim(),
       );
 
+      DialogBox.showSuccessDialog(
+        context,
+        'Account created! Please verify your email.',
+      );
       Navigator.pushNamed(context, '/verify');
     } on FirebaseAuthException catch (e) {
       String message = 'Sign up failed';
@@ -55,13 +58,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       } else if (e.code == 'invalid-email') {
         message = 'Invalid email address.';
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      DialogBox.showErrorDialog(context, message);
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      DialogBox.showErrorDialog(context, 'An unexpected error occurred: $e');
     } finally {
       setState(() {
         isLoading = false;
@@ -91,10 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color:
-                        isDark
-                            ? const Color.fromRGBO(255, 255, 255, 1)
-                            : const Color.fromRGBO(0, 0, 0, 1),
+                    color: isDark ? Colors.white : Colors.black,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -102,10 +98,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   'Join us and enjoy trending movies.',
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
-                    color:
-                        isDark
-                            ? const Color.fromRGBO(255, 255, 255, 0.7)
-                            : const Color.fromRGBO(0, 0, 0, 0.7),
+                    color: isDark ? Colors.white70 : Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -123,10 +116,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       showPassword ? Icons.visibility_off : Icons.visibility,
-                      color:
-                          isDark
-                              ? Colors.white54
-                              : const Color.fromRGBO(0, 0, 0, 0.6),
+                      color: isDark ? Colors.white54 : Colors.black54,
                     ),
                     onPressed: () {
                       setState(() {
@@ -138,18 +128,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 30),
                 isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : MyButton(text: 'Sign Up', onPressed: _signUp),
+                    : MyButton(text: 'Sign Up', onPressed: signUp),
                 const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Already have an account?",
+                      'Already have an account?',
                       style: GoogleFonts.montserrat(
-                        color:
-                            isDark
-                                ? const Color.fromRGBO(255, 255, 255, 0.7)
-                                : const Color.fromRGBO(0, 0, 0, 0.6),
+                        color: isDark ? Colors.white70 : Colors.black54,
                       ),
                     ),
                     TextButton(
@@ -157,7 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        "Login",
+                        'Login',
                         style: GoogleFonts.montserrat(
                           color: const Color.fromRGBO(255, 64, 129, 1),
                           fontWeight: FontWeight.w600,
