@@ -166,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               //Trending
               Text(
-                "Trending",
+                'Trending',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontFamily: GoogleFonts.aBeeZee().fontFamily,
                   fontWeight: FontWeight.w300,
@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 20),
 
               Text(
-                "Top Rated Movies",
+                'Top Rated Movies',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontFamily: GoogleFonts.aBeeZee().fontFamily,
                   fontWeight: FontWeight.w300,
@@ -220,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               Text(
-                "Upcoming Movies",
+                'Upcoming Movies',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontFamily: GoogleFonts.aBeeZee().fontFamily,
                   fontWeight: FontWeight.w300,

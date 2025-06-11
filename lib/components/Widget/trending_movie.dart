@@ -1,23 +1,23 @@
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:trendveiw/API/api_key.dart';
 import 'package:trendveiw/screens/details_page.dart';
 
-
 class TrendingMovie extends StatelessWidget {
-final AsyncSnapshot snapshot;
-final String heading;
+  final AsyncSnapshot snapshot;
+  final String heading;
 
-   const TrendingMovie({
-    super.key, required this.snapshot, required this.heading
+  const TrendingMovie({
+    super.key,
+    required this.snapshot,
+    required this.heading,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      
+
       child: CarouselSlider.builder(
         itemCount: snapshot.data.length,
         options: CarouselOptions(
@@ -27,11 +27,7 @@ final String heading;
           autoPlayCurve: Curves.fastOutSlowIn,
           enlargeCenterPage: true,
         ),
-        itemBuilder: (
-          BuildContext context,
-          int itemIndex,
-          int pageViewIndex,
-        ) {
+        itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
           return GestureDetector(
             onTap: () {
               String imagePath =
@@ -55,14 +51,14 @@ final String heading;
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child:SizedBox(
-                
+              child: SizedBox(
                 width: 200,
                 height: 400,
-                child: Image.network(ApiKey.imageBasePath+snapshot.data[itemIndex].posterPath,
-                filterQuality: FilterQuality.high,
-                fit: BoxFit.cover,),
-            
+                child: Image.network(
+                  ApiKey.imageBasePath + snapshot.data[itemIndex].posterPath,
+                  filterQuality: FilterQuality.high,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           );

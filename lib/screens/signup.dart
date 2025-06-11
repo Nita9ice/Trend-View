@@ -134,7 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Already have an account?",
+                      'Already have an account?',
                       style: GoogleFonts.montserrat(
                         color: isDark ? Colors.white70 : Colors.black54,
                       ),
@@ -144,7 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        "Login",
+                        'Login',
                         style: GoogleFonts.montserrat(
                           color: const Color.fromRGBO(255, 64, 129, 1),
                           fontWeight: FontWeight.w600,
