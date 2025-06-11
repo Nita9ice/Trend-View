@@ -56,6 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -63,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
           style: GoogleFonts.montserrat(
             fontWeight: FontWeight.bold,
             fontSize: 24,
-            color: Colors.pinkAccent,
+            color: theme.primaryColor,
           ),
         ),
         centerTitle: true,
@@ -80,15 +82,23 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: const Color.fromRGBO(30, 30, 30, 1),
+                  color:
+                      theme.brightness == Brightness.dark
+                          ? const Color.fromRGBO(30, 30, 30, 1)
+                          : Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: TextField(
-                  style: const TextStyle(color: Colors.white),
+                  style: theme.textTheme.bodyLarge,
                   decoration: InputDecoration(
-                    icon: const Icon(Icons.search, color: Colors.white54),
+                    icon: Icon(
+                      Icons.search,
+                      color: theme.iconTheme.color?.withOpacity(0.7),
+                    ),
                     hintText: 'Search movies...',
-                    hintStyle: const TextStyle(color: Colors.white54),
+                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.iconTheme.color?.withOpacity(0.5),
+                    ),
                     border: InputBorder.none,
                   ),
                 ),
@@ -108,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasData) {
                     return SizedBox(
                       height: 40,
@@ -136,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 categories[index],
                                 style: const TextStyle(color: Colors.white),
                               ),
-                              backgroundColor: Colors.pinkAccent,
+                              backgroundColor: theme.primaryColor,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 4,
@@ -152,23 +162,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
 
+              const SizedBox(height: 16),
+
               //Trending
               Text(
                 "Trending",
-                style: GoogleFonts.aBeeZee(
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontFamily: GoogleFonts.aBeeZee().fontFamily,
                   fontWeight: FontWeight.w300,
-                  fontSize: 20,
                 ),
               ),
 
-              Divider(),
+              const Divider(),
 
-              //Trending View display
               FutureBuilder(
                 future: trendingMovies,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasData) {
                     return TrendingMovie(
                       snapshot: snapshot,
@@ -179,57 +190,62 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
-              SizedBox(height: 20),
-              //Top rated movies
+
+              const SizedBox(height: 20),
+
               Text(
                 "Top Rated Movies",
-                style: GoogleFonts.aBeeZee(
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontFamily: GoogleFonts.aBeeZee().fontFamily,
                   fontWeight: FontWeight.w300,
-                  fontSize: 20,
                 ),
               ),
-              Divider(),
+
+              const Divider(),
+
               FutureBuilder(
                 future: topRatedMovies,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasData) {
                     return MovieSlide(
                       heading: 'Top Rated Movies',
                       snapshot: snapshot,
                     );
                   } else {
-                    return Text('Error');
+                    return const Text('Error');
                   }
                 },
               ),
 
-              //Upcoming Movies
               Text(
                 "Upcoming Movies",
-                style: GoogleFonts.aBeeZee(
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontFamily: GoogleFonts.aBeeZee().fontFamily,
                   fontWeight: FontWeight.w300,
-                  fontSize: 20,
                 ),
               ),
-              Divider(),
+
+              const Divider(),
+
               FutureBuilder(
                 future: upcomingMovies,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasData) {
                     return MovieSlide(
                       heading: 'Upcoming Movies',
                       snapshot: snapshot,
                     );
                   } else {
-                    return Text('Error');
+                    return const Text('Error');
                   }
                 },
               ),
-              SizedBox(height: 10),
+
+              const SizedBox(height: 10),
             ],
           ),
         ),

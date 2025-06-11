@@ -29,6 +29,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         if (!mounted) return;
         DialogBox.showSuccessDialog(context, 'Email verified successfully!');
         Future.delayed(const Duration(seconds: 1), () {
+          if (!mounted) return;
           Navigator.pushReplacementNamed(context, '/home');
         });
       } else {

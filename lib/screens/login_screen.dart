@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trendveiw/components/buttton.dart';
 import 'package:trendveiw/components/dialog_box.dart';
 import 'package:trendveiw/components/text_field.dart';
@@ -134,8 +135,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (validateInputs()) {
                       try {
                         final userCredential = await _authService.loginUser(
-                          emailController.text,
-                          passwordController.text,
+                          emailController.text.trim(),
+                          passwordController.text.trim(),
                         );
 
                         if (userCredential != null) {
@@ -149,10 +150,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
                           }
                         }
+                      } on FirebaseAuthException catch (e) {
+                        String errorMessage = 'Incorrect email or password';
+
+                        if (e.code == 'user-not-found') {
+                          errorMessage = 'No user found for that email.';
+                        } else if (e.code == 'wrong-password') {
+                          errorMessage = 'Incorrect password provided.';
+                        } else if (e.code == 'invalid-email') {
+                          errorMessage = 'The email address is not valid.';
+                        }
+
+                        DialogBox.showErrorDialog(context, errorMessage);
                       } catch (e) {
                         DialogBox.showErrorDialog(
                           context,
-                          'Login failed: ${e.toString()}',
+                          'An unexpected error occurred.',
                         );
                       }
                     }

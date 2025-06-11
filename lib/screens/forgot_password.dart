@@ -30,6 +30,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      if (!mounted) return;
       DialogBox.showSuccessDialog(
         context,
         'Password reset link sent! Please check your email.',
