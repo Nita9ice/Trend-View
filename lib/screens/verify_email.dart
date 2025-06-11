@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/components/buttton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:trendveiw/components/dialog_box.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({super.key});
@@ -19,26 +20,26 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       isLoading = true;
     });
 
-    User? user = _auth.currentUser;
-    await user?.reload();
-    user = _auth.currentUser;
+    try {
+      User? user = _auth.currentUser;
+      await user?.reload();
+      user = _auth.currentUser;
 
-    if (user != null && user.emailVerified) {
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Email not verified yet. Please check your inbox.',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          backgroundColor:
-              Theme.of(context).snackBarTheme.backgroundColor ??
-              Theme.of(context).colorScheme.surfaceContainerHighest,
-        ),
-      );
+      if (user != null && user.emailVerified) {
+        if (!mounted) return;
+        DialogBox.showSuccessDialog(context, 'Email verified successfully!');
+        Future.delayed(const Duration(seconds: 1), () {
+          Navigator.pushReplacementNamed(context, '/home');
+        });
+      } else {
+        if (!mounted) return;
+        DialogBox.showErrorDialog(
+          context,
+          'Email not verified yet. Please check your inbox and click the verification link.',
+        );
+      }
+    } catch (e) {
+      DialogBox.showErrorDialog(context, 'Something went wrong: $e');
     }
 
     setState(() {
@@ -50,28 +51,28 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     try {
       User? user = _auth.currentUser;
       await user?.sendEmailVerification();
+
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Verification email resent. Check your inbox.',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          backgroundColor:
-              Theme.of(context).snackBarTheme.backgroundColor ??
-              Theme.of(context).colorScheme.surfaceContainerHighest,
-        ),
+      DialogBox.showSuccessDialog(
+        context,
+        'Verification email resent. Please check your inbox.',
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Failed to resend verification email: $e',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ),
-      );
+      DialogBox.showErrorDialog(context, 'Failed to resend email: $e');
     }
+  }
+
+  Future<void> _confirmAndCheckEmail() async {
+    DialogBox.showInfoDialog(
+      context,
+      'Confirm Verification',
+      'Have you clicked the link in your email to verify your account?',
+    );
+
+    // After user closes the dialog, proceed to check
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _checkEmailVerified(); // Optional: You can add a separate confirmation dialog if you want two buttons
+    });
   }
 
   @override
@@ -98,10 +99,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               Text(
                 'A verification link has been sent to your email.\nPlease check your inbox and click the link.',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.textTheme.bodyMedium!.color!.withAlpha(
-                    (0.7 * 255).round(),
-                  ),
-
+                  color: theme.textTheme.bodyMedium!.color!.withAlpha(180),
                   fontFamily: GoogleFonts.montserrat().fontFamily,
                 ),
                 textAlign: TextAlign.center,
@@ -111,7 +109,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   ? const CircularProgressIndicator()
                   : MyButton(
                     text: 'I have verified my email',
-                    onPressed: _checkEmailVerified,
+                    onPressed: _confirmAndCheckEmail,
                   ),
               const SizedBox(height: 20),
               TextButton(

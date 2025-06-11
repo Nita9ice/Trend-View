@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/components/buttton.dart';
+import 'package:trendveiw/components/dialog_box.dart';
 import 'package:trendveiw/components/text_field.dart';
 import 'package:trendveiw/services/auth_service.dart';
 
@@ -13,7 +14,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -24,28 +24,25 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = passwordController.text;
 
     if (email.isEmpty) {
-      showSnackBar('Please enter your email');
+      DialogBox.showErrorDialog(context, 'Please enter your email');
       return false;
     }
     if (!email.contains('@')) {
-      showSnackBar('Please enter a valid email address');
+      DialogBox.showErrorDialog(context, 'Please enter a valid email address');
       return false;
     }
     if (password.isEmpty) {
-      showSnackBar('Please enter your password');
+      DialogBox.showErrorDialog(context, 'Please enter your password');
       return false;
     }
     if (password.length < 6) {
-      showSnackBar('Password must be at least 6 characters');
+      DialogBox.showErrorDialog(
+        context,
+        'Password must be at least 6 characters',
+      );
       return false;
     }
     return true;
-  }
-
-  void showSnackBar(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -144,15 +141,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (userCredential != null) {
                           if (userCredential.user?.emailVerified ?? false) {
                             Navigator.pushNamed(context, '/home');
-                            // Navigator.pushNamed(context, '/profile');
                           } else {
-                            showSnackBar(
+                            DialogBox.showInfoDialog(
+                              context,
+                              'Email Verification Required',
                               'Please verify your email before logging in.',
                             );
                           }
                         }
                       } catch (e) {
-                        showSnackBar('Login failed: ${e.toString()}');
+                        DialogBox.showErrorDialog(
+                          context,
+                          'Login failed: ${e.toString()}',
+                        );
                       }
                     }
                   },

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/components/buttton.dart';
+import 'package:trendveiw/components/dialog_box.dart';
 import 'package:trendveiw/components/text_field.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -19,16 +20,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final email = emailController.text.trim();
 
     if (email.isEmpty) {
-      ScaffoldMessenger.of(
+      DialogBox.showInfoDialog(
         context,
-      ).showSnackBar(SnackBar(content: Text('Please enter your email')));
+        'Input Required',
+        'Please enter your email.',
+      );
       return;
     }
 
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password reset link sent!')),
+      DialogBox.showSuccessDialog(
+        context,
+        'Password reset link sent! Please check your email.',
       );
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'Something went wrong';
@@ -38,9 +42,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         errorMessage = 'Invalid email address.';
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorMessage)));
+      DialogBox.showErrorDialog(context, errorMessage);
     }
   }
 
