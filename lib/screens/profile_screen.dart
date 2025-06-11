@@ -1,16 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import 'package:trendveiw/components/Widget/edit_profile_button.dart';
 import 'package:trendveiw/components/profile_options_tile.dart';
+import 'package:trendveiw/theme/app_theme.dart';
 import 'package:trendveiw/theme/theme_controller.dart';
-import 'package:trendveiw/theme/app_theme.dart'; // Import your AppTheme
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
-  @override
+@override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
@@ -36,10 +35,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
+       /*  leading: IconButton(
           icon: Icon(Icons.arrow_back, color: iconColor),
           onPressed: () => Navigator.pop(context),
-        ),
+        ), */
         actions: [
           IconButton(
             icon: Icon(Icons.settings, color: iconColor),
@@ -177,6 +176,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-    );
+);
   }
 }

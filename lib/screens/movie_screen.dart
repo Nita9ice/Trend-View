@@ -47,6 +47,7 @@ final int futureindex;
                   ApiKey.imageBasePath + snapshot.data[futureindex][index].posterPath;
               String title = snapshot.data[futureindex][index].title;
               String overView = snapshot.data[futureindex][index].overview;
+              int id = snapshot.data[futureindex][index].id;
               String rating = snapshot.data[futureindex][index].voteAverage.toString();
               
               Navigator.push(
@@ -59,6 +60,7 @@ final int futureindex;
                         imagePath: imagePath,
                         overView: overView,
                         rating: rating,
+                        id: id,
                       ),
                 ),
               );
