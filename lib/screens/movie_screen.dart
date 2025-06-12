@@ -36,30 +36,33 @@ class MovieScreen extends StatelessWidget {
               final imagePath = ApiKey.imageBasePath + movie.posterPath;
               final title = movie.title;
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Movie Poster
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => Details(
-                                  heading: heading,
-                                  title: title,
-                                  imagePath: imagePath,
-                                  overView: movie.overview,
-                                  rating: movie.voteAverage.toString(),
-                                ),
-                          ),
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(imagePath, fit: BoxFit.cover),
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Movie poster
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    String imagePath =
+                  ApiKey.imageBasePath + snapshot.data[futureindex][index].posterPath;
+              String title = snapshot.data[futureindex][index].title;
+              String overView = snapshot.data[futureindex][index].overview;
+              int id = snapshot.data[futureindex][index].id;
+              String rating = snapshot.data[futureindex][index].voteAverage.toString();
+              
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => Details(
+                        heading: heading,
+                        title: title,
+                        imagePath: imagePath,
+                        overView: overView,
+                        rating: rating,
+                        id: id,
+
                       ),
                     ),
                   ),

@@ -34,6 +34,7 @@ class TrendingMovie extends StatelessWidget {
                   ApiKey.imageBasePath + snapshot.data[itemIndex].posterPath;
               String title = snapshot.data[itemIndex].title;
               String overView = snapshot.data[itemIndex].overview;
+              int id = snapshot.data[itemIndex].id;
               String rating = snapshot.data[itemIndex].voteAverage.toString();
               Navigator.push(
                 context,
@@ -45,6 +46,7 @@ class TrendingMovie extends StatelessWidget {
                         imagePath: imagePath,
                         overView: overView,
                         rating: rating,
+                        id: id,
                       ),
                 ),
               );

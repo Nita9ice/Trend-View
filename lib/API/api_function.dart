@@ -6,15 +6,24 @@ import 'package:trendveiw/model/movie_model.dart';
 
 Future<List<Movie>> apiFunction(url) async {
    try{
+    
    var response = await http.get(Uri.parse(url));
    
    if(response.statusCode== 200){
      
      
-    var jsonResponse = jsonDecode(response.body)['results'] as List;
+    var jsonResponse = (jsonDecode(response.body)['results'] as List).where((movie) => movie != null);
            
-           /* print(jsonResponse); */
-    return jsonResponse.map((movie)=> Movie.fromjson(movie)).toList();
+           print(jsonResponse);
+      // Ensure 'results' exists and is a List
+      
+    return jsonResponse.map((movie){
+ /* print(movie); */
+   return  Movie.fromjson(movie);
+
+
+    }).toList();
+   
    
    }else{
    throw "Error in Getting Data";

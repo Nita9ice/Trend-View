@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:trendveiw/components/util/wrapper_page.dart';
 import 'package:trendveiw/screens/favourite_screen.dart';
 import 'package:trendveiw/screens/settings.dart';
 import 'package:trendveiw/screens/verify_email.dart';
@@ -18,16 +20,23 @@ import 'package:trendveiw/theme/app_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+   // Check if user is signed in
+  User? user = FirebaseAuth.instance.currentUser;
+  String initialRoute = user == null ? '/splash' : '/wrapper';
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeController(),
-      child: const TrendVeiw(),
+      child:  TrendVeiw(initialRoute: initialRoute),
     ),
   );
 }
 
 class TrendVeiw extends StatelessWidget {
-  const TrendVeiw({super.key});
+final String initialRoute;
+
+  const TrendVeiw({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +44,9 @@ class TrendVeiw extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/splash',
+      initialRoute: initialRoute,
       routes: {
+        '/wrapper': (context) => const Wrapper(),
         '/splash': (context) => const SplashScreen(),
         '/welcome': (context) => const WelcomeScreen(),
         '/login': (context) => const LoginScreen(),

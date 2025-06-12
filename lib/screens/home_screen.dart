@@ -245,7 +245,133 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
 
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
+              //Action Movies
+              Text(
+                "Action Movies",
+                style: GoogleFonts.aBeeZee(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 20,
+                ),
+              ),
+              Divider(),
+              FutureBuilder(
+                future: actionMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasData) {
+                    return MovieSlide(
+                      heading: 'Action Movies',
+                      snapshot: snapshot,
+                    );
+                  } else {
+                    return Text('Error');
+                  }
+                },
+              ),
+              SizedBox(height: 10),
+              //Comedy Movies
+              Text(
+                "Comedy Movies",
+                style: GoogleFonts.aBeeZee(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 20,
+                ),
+              ),
+              Divider(),
+              FutureBuilder(
+                future: comedyMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasData) {
+                    return MovieSlide(
+                      heading: 'Action Movies',
+                      snapshot: snapshot,
+                    );
+                  } else {
+                    return Text('Error');
+                  }
+                },
+              ),
+              SizedBox(height: 10),
+              //Drama Movies
+              Text(
+                "Drama Movies",
+                style: GoogleFonts.aBeeZee(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 20,
+                ),
+              ),
+              Divider(),
+              FutureBuilder(
+                future: dramaMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasData) {
+                    return MovieSlide(
+                      heading: 'Action Movies',
+                      snapshot: snapshot,
+                    );
+                  } else {
+                    return Text('Error');
+                  }
+                },
+              ),
+              SizedBox(height: 10),
+              //Horror Movies
+              Text(
+                "Horror Movies",
+                style: GoogleFonts.aBeeZee(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 20,
+                ),
+              ),
+              Divider(),
+              FutureBuilder(
+                future: horrorMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasData) {
+                    return MovieSlide(
+                      heading: 'Action Movies',
+                      snapshot: snapshot,
+                    );
+                  } else {
+                    return Text('Error');
+                  }
+                },
+              ),
+              SizedBox(height: 10),
+              //Sci-Fi Movies
+              Text(
+                "Sci-Fi Movies",
+                style: GoogleFonts.aBeeZee(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 20,
+                ),
+              ),
+              Divider(),
+              FutureBuilder(
+                future: sciFiMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasData) {
+                    return MovieSlide(
+                      heading: 'Action Movies',
+                      snapshot: snapshot,
+                    );
+                  } else {
+                    return Text('Error');
+                  }
+                },
+              ),
+ 
+
             ],
           ),
         ),

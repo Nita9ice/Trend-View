@@ -30,6 +30,7 @@ class _MovieSlideState extends State<MovieSlide> {
                   ApiKey.imageBasePath + widget.snapshot.data[index].posterPath;
               String title = widget.snapshot.data[index].title;
               String overView = widget.snapshot.data[index].overview;
+              int id = widget.snapshot.data[index].id;
               String rating = widget.snapshot.data[index].voteAverage.toString();
               String heading = widget.heading;
               Navigator.push(
@@ -42,6 +43,8 @@ class _MovieSlideState extends State<MovieSlide> {
                         imagePath: imagePath,
                         overView: overView,
                         rating: rating,
+                        id: id,
+
                       ),
                 ),
               );
