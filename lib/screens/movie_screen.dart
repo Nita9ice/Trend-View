@@ -19,7 +19,11 @@ class MovieScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor, // RGBA(18, 18, 18, 1)
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+title: Text(heading),
+
+      ),// RGBA(18, 18, 18, 1)
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -65,7 +69,13 @@ class MovieScreen extends StatelessWidget {
 
                       ),
                     ),
+                  );},
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(imagePath),
                   ),
+                ),
+              ),
 
                   const SizedBox(height: 8),
 
