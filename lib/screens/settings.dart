@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trendveiw/components/profile_options_tile.dart';
 import 'package:trendveiw/theme/theme_controller.dart';
-import 'package:trendveiw/theme/app_theme.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
