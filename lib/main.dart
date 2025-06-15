@@ -21,20 +21,20 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-   // Check if user is signed in
+  // Check if user is signed in
   User? user = FirebaseAuth.instance.currentUser;
   String initialRoute = user == null ? '/splash' : '/wrapper';
 
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeController(),
-      child:  TrendVeiw(initialRoute: initialRoute),
+      child: TrendVeiw(initialRoute: initialRoute),
     ),
   );
 }
 
 class TrendVeiw extends StatelessWidget {
-final String initialRoute;
+  final String initialRoute;
 
   const TrendVeiw({super.key, required this.initialRoute});
 
@@ -45,6 +45,7 @@ final String initialRoute;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: initialRoute,
+
       routes: {
         '/wrapper': (context) => const Wrapper(),
         '/splash': (context) => const SplashScreen(),

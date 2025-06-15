@@ -5,6 +5,7 @@ import 'package:trendveiw/components/Widget/movie_slide.dart';
 import 'package:trendveiw/components/Widget/trending_movie.dart';
 import 'package:trendveiw/model/movie_model.dart';
 import 'package:trendveiw/screens/movie_screen.dart';
+import 'package:trendveiw/screens/search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Movie>> dramaMovies;
   late Future<List<Movie>> horrorMovies;
   late Future<List<Movie>> sciFiMovies;
+  Future<List<Movie>>? searchResults;
 
   @override
   void initState() {
@@ -78,32 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search bar
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color:
-                      theme.brightness == Brightness.dark
-                          ? const Color.fromRGBO(30, 30, 30, 1)
-                          : Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TextField(
-                  style: theme.textTheme.bodyLarge,
-                  decoration: InputDecoration(
-                    icon: Icon(
-                      Icons.search,
-                      color: theme.iconTheme.color?.withOpacity(0.7),
-                    ),
-                    hintText: 'Search movies...',
-                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.iconTheme.color?.withOpacity(0.5),
-                    ),
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-
               const SizedBox(height: 24),
 
               // Categories horizontal list
@@ -165,12 +141,27 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 16),
 
               //Trending
-              Text(
-                'Trending',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontFamily: GoogleFonts.aBeeZee().fontFamily,
-                  fontWeight: FontWeight.w300,
-                ),
+              Row(
+                children: [
+                  Text(
+                    'Trending',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontFamily: GoogleFonts.aBeeZee().fontFamily,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SearchScreen()),
+                      );
+                    },
+                    icon: const Icon(Icons.search),
+                    color: theme.iconTheme.color?.withOpacity(0.7),
+                  ),
+                ],
               ),
 
               const Divider(),
@@ -370,8 +361,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
- 
-
             ],
           ),
         ),
