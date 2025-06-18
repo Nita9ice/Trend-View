@@ -1,7 +1,14 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:trendveiw/components/buttton.dart';
 import 'package:trendveiw/components/text_field.dart';
+import 'dart:io'; // For File class
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -11,17 +18,121 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final TextEditingController _usernameController = TextEditingController();
+   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+ /*  final TextEditingController _passwordController = TextEditingController(); */
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  File? _selectedImage; // To store the picked image file
+ bool _isUploading = false;
+  String? _current64bytes; // To store existing image URL from Firestore
+
+ 
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getBase64Image();
+  }
+
+ 
+
+   Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    try {
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.gallery, // You can also use ImageSource.camera
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick image: $e')),
+      );
+    }
+  }
+
+   Future<Image?> getBase64Image() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      if (doc.exists && doc.data()?.containsKey('profileImageUrl') == true) {
+        final base64String = doc['profileImageUrl'] as String;
+        final userName = doc['username'];
+        
+setState(() {
+  _current64bytes = base64String;
+  _usernameController.text = user.displayName?? "";
+  _emailController.text = user.email??"";
+});
+
+        
+        
+      }
+    }
+    return null;
+  }
+
+  Future<void> _saveProfile() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You must be logged in to save profile')),
+        );
+        return;
+      }
+
+      /* String? imageUrl = _currentImageUrl; */
+      
+      // Upload new image if selected
+      if (_selectedImage != null) {
+        // Read the image file as bytes
+      final bytes = await _selectedImage!.readAsBytes();
+       // Convert to Base64
+      final base64String = base64Encode(bytes);
+       // Save all data to Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .set({
+            'username': _usernameController.text.trim(),
+            'profileImageUrl': base64String,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+await user.updateDisplayName(
+        _usernameController.text.trim(),
+      );
+        ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully')),
+      );
+      }
+
+     
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saving profile: $e')),
+      );
+    }
+  }
 
   @override
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
-    _passwordController.dispose();
+   /*  _passwordController.dispose(); */
     super.dispose();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +163,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               Center(
                 child: Stack(
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 50,
-                      backgroundImage: AssetImage(
-                        'assets/default_avatar.png',
-                      ), // Replace with Firebase user image later
+                      backgroundImage: _selectedImage != null
+                          ? FileImage(_selectedImage!) // Show selected image
+                          : (_current64bytes != null
+                  ? MemoryImage(base64Decode(_current64bytes?? ""))
+                  : const AssetImage('assets/default_avatar.png')) as ImageProvider, // Default image
                     ),
                     Positioned(
                       bottom: 0,
@@ -72,9 +185,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             color: Colors.white,
                             size: 20,
                           ),
-                          onPressed: () {
-                            // implement image picker
-                          },
+                          onPressed: _pickImage,
                         ),
                       ),
                     ),
@@ -91,21 +202,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: 20),
 
               // Email field
-              MyTextField(controller: _emailController, hintText: 'Email'),
+              MyTextField(controller: _emailController, hintText: 'Email', enabled: false,),
               const SizedBox(height: 20),
 
-              // Password field
+              /* // Password field
               MyTextField(
                 controller: _passwordController,
                 hintText: 'Password',
               ),
-              const SizedBox(height: 200),
+              const SizedBox(height: 200), */
 
               // Save button
               MyButton(
                 text: 'Save',
                 onPressed: () {
                   // function to save edited profile
+                  _saveProfile();
                 },
               ),
             ],

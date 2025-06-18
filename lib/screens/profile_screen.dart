@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +17,38 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? _current64bytes;
+  String? _username;
+  String? _email;
+  @override
+  void initState() {
+    
+    super.initState();
+    getBase64Image();
+  }
+Future<Image?> getBase64Image() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      if (doc.exists && doc.data()?.containsKey('profileImageUrl') == true) {
+        final base64String = doc['profileImageUrl'] as String;
+        /* final userName = doc['username']; */
+        
+setState(() {
+  _current64bytes = base64String;
+  _username = user.displayName?? "";
+  _email = user.email??"";
+});
+
+        
+        
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeController = Provider.of<ThemeController>(context);
@@ -62,12 +97,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               radius: 50,
               backgroundColor:
                   isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-              child: Icon(Icons.person, size: 60, color: subTextColor),
+              backgroundImage:( _current64bytes != null
+                  ? MemoryImage(base64Decode(_current64bytes?? ""))
+                  : const AssetImage('assets/default_avatar.png')) as ImageProvider,/* Icon(Icons.person, size: 60, color: subTextColor) */
             ),
             const SizedBox(height: 10),
 
-            Text(
-              'Username Placeholder',
+            Text( _username?? 'Username',
               style: TextStyle(
                 color: textColor,
                 fontSize: 20,
@@ -75,8 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(height: 5),
-            Text(
-              'email@example.com',
+            Text( _email ?? 'email@example.com',
               style: TextStyle(color: subTextColor, fontSize: 14),
             ),
             const SizedBox(height: 15),

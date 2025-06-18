@@ -5,13 +5,14 @@ class MyTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final Widget? suffixIcon;
-
+final bool? enabled;
   const MyTextField({
     super.key,
     required this.controller,
     required this.hintText,
     this.obscureText = false,
     this.suffixIcon,
+    this.enabled,
   });
 
   @override
@@ -21,6 +22,7 @@ class MyTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: obscureText,
+      enabled: enabled,
       style: TextStyle(
         color:
             isDark

@@ -59,4 +59,22 @@ class AuthService {
 
   // Listen to auth state changes
   Stream<User?> get authChanges => _auth.authStateChanges();
+
+
+
+  Future<UserCredential?> signInWithGoogle(credential) async {
+    try {
+      
+
+      // Sign in to Firebase with the Google credential
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+
+return userCredential;
+      
+    } catch (e) {
+      /* print('Error signing in with Google: $e'); */
+      return null;
+      
+    }
+  }
 }

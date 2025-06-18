@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:trendveiw/components/buttton.dart';
 import 'package:trendveiw/components/dialog_box.dart';
 import 'package:trendveiw/components/text_field.dart';
@@ -19,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   bool showPassword = false;
+  bool isLoadingGoogleSignIn = false; // Track Google Sign-In loading state
 
   bool validateInputs() {
     final email = emailController.text;
@@ -44,6 +46,67 @@ class _LoginScreenState extends State<LoginScreen> {
       return false;
     }
     return true;
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      isLoadingGoogleSignIn = true;
+    });
+
+    try {
+      // Trigger the Google Sign In flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        setState(() {
+          isLoadingGoogleSignIn = false;
+        });
+        return;
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await _authService.signInWithGoogle(credential);
+
+      if (userCredential != null) {
+        if (userCredential.user?.emailVerified ?? false) {
+          if (mounted) {
+            Navigator.pushNamed(context, '/wrapper');
+          }
+        } else {
+          if (mounted) {
+            DialogBox.showInfoDialog(
+              context,
+              'Email Verification Required',
+              'Please verify your email before logging in.',
+            );
+          }
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        DialogBox.showErrorDialog(
+          context, 'Google Sign-In failed: ${e.message}');
+      }
+    } catch (e) {
+      if (mounted) {
+        DialogBox.showErrorDialog(
+            context, 'Google Sign-In failed. Please try again.');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingGoogleSignIn = false;
+        });
+      }
+    }
   }
 
   @override
@@ -141,14 +204,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         if (userCredential != null) {
                           if (userCredential.user?.emailVerified ?? false) {
-                            Navigator.pushNamed(context, '/wrapper');
-                            // Navigator.pushNamed(context, '/profile');
+                            if (mounted) {
+                              Navigator.pushNamed(context, '/wrapper');
+                            }
                           } else {
-                            DialogBox.showInfoDialog(
-                              context,
-                              'Email Verification Required',
-                              'Please verify your email before logging in.',
-                            );
+                            if (mounted) {
+                              DialogBox.showInfoDialog(
+                                context,
+                                'Email Verification Required',
+                                'Please verify your email before logging in.',
+                              );
+                            }
                           }
                         }
                       } on FirebaseAuthException catch (e) {
@@ -162,18 +228,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           errorMessage = 'The email address is not valid.';
                         }
 
-                        DialogBox.showErrorDialog(context, errorMessage);
+                        if (mounted) {
+                          DialogBox.showErrorDialog(context, errorMessage);
+                        }
                       } catch (e) {
-                        DialogBox.showErrorDialog(
-                          context,
-                          'An unexpected error occurred.',
-                        );
+                        if (mounted) {
+                          DialogBox.showErrorDialog(
+                            context,
+                            'An unexpected error occurred.',
+                          );
+                        }
                       }
                     }
                   },
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 10),
 
                 // Create account text
                 Row(
@@ -198,6 +268,45 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ],
+                ),
+
+                const SizedBox(height: 30),
+                
+                Center(child: Text("OR")),
+
+                const SizedBox(height: 30),
+                // Sign in with Google
+                Center(
+                  child: ElevatedButton(
+                    onPressed: isLoadingGoogleSignIn ? null : _signInWithGoogle,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(200, 50),
+                    ),
+                    child: isLoadingGoogleSignIn
+                        ? SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                theme.colorScheme.onPrimary,
+                              ),
+                            ),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'images/google_logo.png',
+                                height: 24,
+                              ),
+                              SizedBox(width: 12),
+                              Text('Sign in with Google'),
+                            ],
+                          ),
+                  ),
                 ),
               ],
             ),
