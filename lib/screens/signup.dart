@@ -71,12 +71,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Get the current app theme (light or dark)
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor:
-          isDark
-              ? const Color.fromRGBO(18, 18, 18, 1)
-              : const Color.fromRGBO(255, 255, 255, 1),
+      backgroundColor: theme.scaffoldBackgroundColor,
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -90,7 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: theme.textTheme.headlineLarge?.color,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -98,7 +98,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   'Join us and enjoy trending movies.',
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
-                    color: isDark ? Colors.white70 : Colors.black87,
+                    color: theme.textTheme.bodyMedium?.color,
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -116,7 +116,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       showPassword ? Icons.visibility_off : Icons.visibility,
-                      color: isDark ? Colors.white54 : Colors.black54,
+                      color: theme.iconTheme.color?.withAlpha(140),
                     ),
                     onPressed: () {
                       setState(() {

@@ -7,7 +7,7 @@ class AppTheme {
     primaryColor: const Color.fromRGBO(255, 64, 129, 1),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
-      iconTheme: IconThemeData(color: Colors.black),
+      iconTheme: IconThemeData(color: Color.fromRGBO(18, 18, 18, 1)),
       titleTextStyle: TextStyle(
         color: Colors.black,
         fontSize: 20,
@@ -17,9 +17,14 @@ class AppTheme {
     ),
     iconTheme: const IconThemeData(color: Colors.black),
     textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: Colors.black),
+      headlineLarge: TextStyle(color: Colors.black),
       bodyMedium: TextStyle(color: Colors.black),
       titleLarge: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+    ),
+    hintColor: const Color.fromRGBO(18, 18, 18, 1),
+    // theme for text field
+    inputDecorationTheme: InputDecorationTheme(
+      fillColor: Color.fromRGBO(211, 211, 211, 1),
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
@@ -35,7 +40,6 @@ class AppTheme {
         return Colors.grey.shade400;
       }),
     ),
-    // Define other colors or styles if needed
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -44,7 +48,7 @@ class AppTheme {
     primaryColor: const Color.fromRGBO(255, 64, 129, 1),
     appBarTheme: const AppBarTheme(
       backgroundColor: Color.fromRGBO(18, 18, 18, 1),
-      iconTheme: IconThemeData(color: Colors.white),
+      iconTheme: IconThemeData(color: Color.fromRGBO(255, 255, 255, 1)),
       titleTextStyle: TextStyle(
         color: Colors.white,
         fontSize: 20,
@@ -54,9 +58,15 @@ class AppTheme {
     ),
     iconTheme: const IconThemeData(color: Colors.white),
     textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: Colors.white),
+      headlineLarge: TextStyle(color: Colors.white),
       bodyMedium: TextStyle(color: Colors.white70),
       titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    ),
+
+    hintColor: Colors.white70,
+    // theme for text field
+    inputDecorationTheme: InputDecorationTheme(
+      fillColor: const Color.fromRGBO(30, 30, 30, 1),
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
