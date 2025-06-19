@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/API/api_call.dart';
@@ -35,6 +37,77 @@ class Details extends StatefulWidget {
 
 class _DetailsState extends State<Details> {
 late Future<String> movieKey = ApiCall().getMoviesVideo(widget.id);
+bool isFavorite = false;
+ final User? user = FirebaseAuth.instance.currentUser;
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+     _checkIfFavorite();
+  }
+
+  Future<void> _checkIfFavorite() async {
+     if (user == null) return;
+    
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .collection('favorites')
+        .doc(widget.id.toString())
+        .get();
+
+    if (mounted) {
+      setState(() {
+        isFavorite = doc.exists;
+      });
+    }
+  }
+
+ Future<void> _toggleFavorite() async {
+    if (user == null) {
+      // Optionally show a login prompt
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please login to add favorites')),
+      );
+      return;
+    }
+
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+
+    try {
+      if (isFavorite) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .collection('favorites')
+            .doc(widget.id.toString())
+            .set({
+          'id': widget.id,
+          'title': widget.title,
+          'imagePath': widget.imagePath,
+          'overview': widget.overView,
+          'rating': widget.rating,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+      } else {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .collection('favorites')
+            .doc(widget.id.toString())
+            .delete();
+      }
+    } catch (e) {
+      setState(() {
+        isFavorite = !isFavorite; // Revert on error
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +120,15 @@ late Future<String> movieKey = ApiCall().getMoviesVideo(widget.id);
         title: Text(widget.heading),
         centerTitle: true,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? Colors.red : Colors.white,
+            ),
+            onPressed: _toggleFavorite,
+          ),
+        ],
       ),
 
       body: SingleChildScrollView(

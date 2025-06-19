@@ -37,7 +37,7 @@ dependencies:
   google_fonts: ^6.2.1
   smooth_page_indicator: ^1.2.1
   firebase_auth: ^5.5.4
-  firebase_storage: ^12.4.6
+  firebase_storage: ^12.4.7
   cloud_firestore: ^5.6.8
   firebase_core: ^3.13.1
   carousel_slider: ^5.1.1
@@ -46,6 +46,7 @@ dependencies:
   youtube_player_flutter: ^9.1.1
   image_picker: ^1.1.2
   provider: ^6.1.5
+  google_sign_in: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -56,7 +57,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^6.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -70,8 +71,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
