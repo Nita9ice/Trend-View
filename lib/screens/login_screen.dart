@@ -93,12 +93,16 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         DialogBox.showErrorDialog(
-          context, 'Google Sign-In failed: ${e.message}');
+          context,
+          'Google Sign-In failed: ${e.message}',
+        );
       }
     } catch (e) {
       if (mounted) {
         DialogBox.showErrorDialog(
-            context, 'Google Sign-In failed. Please try again.');
+          context,
+          'Google Sign-In failed. Please try again.',
+        );
       }
     } finally {
       if (mounted) {
@@ -271,7 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 const SizedBox(height: 30),
-                
+
                 Center(child: Text("OR")),
 
                 const SizedBox(height: 30),
@@ -279,33 +283,32 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: ElevatedButton(
                     onPressed: isLoadingGoogleSignIn ? null : _signInWithGoogle,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(200, 50),
-                    ),
-                    child: isLoadingGoogleSignIn
-                        ? SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                theme.colorScheme.onPrimary,
+                    style: ElevatedButton.styleFrom(minimumSize: Size(200, 50)),
+                    child:
+                        isLoadingGoogleSignIn
+                            ? SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  theme.colorScheme.onPrimary,
+                                ),
                               ),
+                            )
+                            : Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'images/google_logo.png',
+                                  height: 24,
+                                ),
+                                SizedBox(width: 12),
+                                Text('Sign in with Google'),
+                              ],
                             ),
-                          )
-                        : Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'images/google_logo.png',
-                                height: 24,
-                              ),
-                              SizedBox(width: 12),
-                              Text('Sign in with Google'),
-                            ],
-                          ),
                   ),
                 ),
               ],
