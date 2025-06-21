@@ -18,7 +18,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   // FirebaseAuth instance used for handling user authentication.
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // function to verify user
+  // Checks if the user's email has been verified:
+  // - Reloads the current user from Firebase
+  // - If verified, shows a success dialog and navigates to the home screen
+  // - If not verified, shows an error dialog prompting the user to verify
+  // - Handles errors gracefully and updates the loading state
   Future<void> _checkEmailVerified() async {
     setState(() {
       isLoading = true;
@@ -125,7 +129,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   'Didn\'t receive the email? Resend',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: const Color.fromRGBO(255, 64, 129, 1),
+                    color: theme.primaryColor,
                     fontFamily: GoogleFonts.montserrat().fontFamily,
                   ),
                 ),
