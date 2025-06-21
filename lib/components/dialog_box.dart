@@ -21,6 +21,7 @@ class DialogBox {
   }
 
   // Show error dialog
+
   static void showErrorDialog(BuildContext context, String message) {
     showDialog(
       context: context,

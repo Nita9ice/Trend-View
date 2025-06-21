@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:trendveiw/components/buttton.dart';
 import 'package:trendveiw/components/dialog_box.dart';
 import 'package:trendveiw/components/text_field.dart';
@@ -44,11 +46,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
         usernameController.text.trim(),
       );
 
-      DialogBox.showSuccessDialog(
-        context,
-        'Account created! Please verify your email.',
+      // Wait for dialog to close before navigation
+      await showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Success'),
+              content: const Text('Account created! Please verify your email.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(), // Close dialog
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
       );
-      Navigator.pushNamed(context, '/verify');
+
+      if (mounted) {
+        Navigator.pushNamed(context, '/verify');
+      }
     } on FirebaseAuthException catch (e) {
       String message = 'Sign up failed';
       if (e.code == 'email-already-in-use') {
@@ -62,9 +78,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } catch (e) {
       DialogBox.showErrorDialog(context, 'An unexpected error occurred: $e');
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -129,7 +147,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : MyButton(text: 'Sign Up', onPressed: signUp),
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
+                Center(child: Text("OR")),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(minimumSize: Size(200, 50)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset('images/google_logo.png', height: 24),
+                        SizedBox(width: 12),
+                        Text('Create account with Google'),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 50),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

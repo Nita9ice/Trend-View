@@ -247,38 +247,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
 
-                // Create account text
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Don\'t have an account?',
-                      style: GoogleFonts.montserrat(
-                        color: theme.textTheme.bodyMedium?.color,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/signup');
-                      },
-                      child: Text(
-                        'Create one',
-                        style: GoogleFonts.montserrat(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                Center(child: Text('OR')),
 
-                const SizedBox(height: 30),
-
-                Center(child: Text("OR")),
-
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
                 // Sign in with Google
                 Center(
                   child: ElevatedButton(
@@ -311,6 +284,35 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                   ),
                 ),
+
+                const SizedBox(height: 50),
+
+                // Create account text
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Don\'t have an account?',
+                      style: GoogleFonts.montserrat(
+                        color: theme.textTheme.bodyMedium?.color,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/signup');
+                      },
+                      child: Text(
+                        'Create one',
+                        style: GoogleFonts.montserrat(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 30),
               ],
             ),
           ),

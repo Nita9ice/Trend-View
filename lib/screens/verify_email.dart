@@ -72,7 +72,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
     // After user closes the dialog, proceed to check
     Future.delayed(const Duration(milliseconds: 300), () {
-      _checkEmailVerified(); // Optional: You can add a separate confirmation dialog if you want two buttons
+      _checkEmailVerified();
     });
   }
 

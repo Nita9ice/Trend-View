@@ -14,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    // Navigate to HomeScreen after 2 seconds
+    // Navigate to welcome screen after 5 seconds
     Future.delayed(const Duration(seconds: 5), () {
       if (!mounted) return;
       Navigator.pushReplacement(
@@ -49,7 +49,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 fontSize: 42,
                 fontWeight: FontWeight.bold,
                 color: const Color.fromRGBO(255, 255, 255, 1),
-                // letterSpacing: 2.5,
               ),
             ),
 

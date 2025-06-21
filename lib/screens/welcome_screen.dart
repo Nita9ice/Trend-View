@@ -13,11 +13,15 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  // Controller to manage and control the pages in a PageView ; for swiping between screens
   final PageController _controller = PageController();
 
   @override
   Widget build(BuildContext context) {
+    // Access the ThemeController instance from the Provider for managing light/dark theme state
     final themeController = Provider.of<ThemeController>(context);
+
+    // Get the current theme data from the context.
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -28,6 +32,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         actions: [
           IconButton(
             icon: Icon(
+              // switch icons based on mode
               themeController.isDarkMode
                   ? Icons.dark_mode_outlined
                   : Icons.light_mode,

@@ -12,38 +12,35 @@ import 'package:trendveiw/theme/theme_controller.dart';
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
-@override
+  @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
- final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? _current64bytes;
   String? _username;
   String? _email;
+
   @override
   void initState() {
-    
     super.initState();
     getBase64Image();
   }
-Future<Image?> getBase64Image() async {
+
+  Future<Image?> getBase64Image() async {
     final user = _auth.currentUser;
     if (user != null) {
       final doc = await _firestore.collection('users').doc(user.uid).get();
       if (doc.exists && doc.data()?.containsKey('profileImageUrl') == true) {
         final base64String = doc['profileImageUrl'] as String;
-        /* final userName = doc['username']; */
-        
-setState(() {
-  _current64bytes = base64String;
-  _username = user.displayName?? "";
-  _email = user.email??"";
-});
 
-        
-        
+        setState(() {
+          _current64bytes = base64String;
+          _username = doc['username'] ?? user.displayName ?? ""; // ✅ FIXED
+          _email = user.email ?? "";
+        });
       }
     }
     return null;
@@ -54,12 +51,10 @@ setState(() {
     final themeController = Provider.of<ThemeController>(context);
     final isDark = themeController.isDarkMode;
 
-    // Use colors from AppTheme depending on theme mode
     final backgroundColor =
         isDark
             ? AppTheme.darkTheme.scaffoldBackgroundColor
             : AppTheme.lightTheme.scaffoldBackgroundColor;
-    // final primaryColor = AppTheme.primaryColor;
     final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.white70 : Colors.black54;
     final dividerColor = isDark ? Colors.white24 : Colors.black26;
@@ -70,15 +65,10 @@ setState(() {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-       /*  leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: iconColor),
-          onPressed: () => Navigator.pop(context),
-        ), */
         actions: [
           IconButton(
             icon: Icon(Icons.settings, color: iconColor),
             onPressed: () {
-              // take me to settings screen
               Navigator.pushNamed(context, '/settings');
             },
           ),
@@ -97,13 +87,16 @@ setState(() {
               radius: 50,
               backgroundColor:
                   isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-              backgroundImage:( _current64bytes != null
-                  ? MemoryImage(base64Decode(_current64bytes?? ""))
-                  : const AssetImage('assets/default_avatar.png')) as ImageProvider,/* Icon(Icons.person, size: 60, color: subTextColor) */
+              backgroundImage:
+                  (_current64bytes != null
+                          ? MemoryImage(base64Decode(_current64bytes ?? ""))
+                          : const AssetImage('assets/default_avatar.png'))
+                      as ImageProvider,
             ),
             const SizedBox(height: 10),
 
-            Text( _username?? 'Username',
+            Text(
+              _username ?? 'Username',
               style: TextStyle(
                 color: textColor,
                 fontSize: 20,
@@ -111,26 +104,26 @@ setState(() {
               ),
             ),
             const SizedBox(height: 5),
-            Text( _email ?? 'email@example.com',
+            Text(
+              _email ?? 'email@example.com',
               style: TextStyle(color: subTextColor, fontSize: 14),
             ),
             const SizedBox(height: 15),
 
             // Edit Profile Button
             EditProfileButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/edit');
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/edit');
+                await getBase64Image(); // ✅ Refresh after edit
               },
             ),
 
             const SizedBox(height: 30),
 
-            // List Options
             ProfileOptionTile(
               icon: Icons.favorite,
               label: 'Favourite',
               onTap: () {
-                // take me to favourite screen
                 Navigator.pushNamed(context, '/favourite');
               },
             ),
@@ -145,7 +138,6 @@ setState(() {
               onTap: () {},
             ),
             Divider(color: dividerColor),
-
             ProfileOptionTile(
               icon: Icons.display_settings,
               label: 'Display',
@@ -167,11 +159,9 @@ setState(() {
               label: 'Clear History',
               onTap: () {},
             ),
-
             const SizedBox(height: 10),
             Divider(color: dividerColor),
 
-            // Logout
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text(
@@ -202,6 +192,6 @@ setState(() {
           ],
         ),
       ),
-);
+    );
   }
 }
