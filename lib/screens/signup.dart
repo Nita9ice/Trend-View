@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:trendveiw/components/buttton.dart';
 import 'package:trendveiw/components/dialog_box.dart';
 import 'package:trendveiw/components/text_field.dart';
@@ -16,12 +14,24 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  // Controller for handling input in the username text field
   final TextEditingController usernameController = TextEditingController();
+
+  // Controller for handling input in the email text field
   final TextEditingController emailController = TextEditingController();
+
+  // Controller for handling input in the password text field
   final TextEditingController passwordController = TextEditingController();
+
+  // Toggles password visibility in the password field
   bool showPassword = false;
+
+  // Tracks the loading state to show a progress indicator when needed.
   bool isLoading = false;
 
+  // Validates that all input fields (username, email, password) are filled.
+  // Shows an error dialog if any field is empty and returns false.
+  // Returns true if all fields are valid.
   bool validateInputs() {
     if (usernameController.text.isEmpty ||
         emailController.text.isEmpty ||
@@ -32,6 +42,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return true;
   }
 
+  // Handles user sign-up process:
+  // - Validates input fields
+  // - Shows loading indicator
+  // - Calls AuthService to register the user with email, password, and username
   Future<void> signUp() async {
     if (!validateInputs()) return;
 
@@ -47,6 +61,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
 
       // Wait for dialog to close before navigation
+      if (!mounted) return;
       await showDialog(
         context: context,
         builder:
@@ -74,8 +89,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       } else if (e.code == 'invalid-email') {
         message = 'Invalid email address.';
       }
+      if (!mounted) return;
       DialogBox.showErrorDialog(context, message);
     } catch (e) {
+      if (!mounted) return;
       DialogBox.showErrorDialog(context, 'An unexpected error occurred: $e');
     } finally {
       if (mounted) {
@@ -143,30 +160,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 50),
                 isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : MyButton(text: 'Sign Up', onPressed: signUp),
+
                 const SizedBox(height: 20),
-                Center(child: Text("OR")),
-                const SizedBox(height: 20),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(minimumSize: Size(200, 50)),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset('images/google_logo.png', height: 24),
-                        SizedBox(width: 12),
-                        Text('Create account with Google'),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 50),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -184,7 +183,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: Text(
                         'Login',
                         style: GoogleFonts.montserrat(
-                          color: const Color.fromRGBO(255, 64, 129, 1),
+                          color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:trendveiw/components/buttton.dart';
 import 'package:trendveiw/components/dialog_box.dart';
 import 'package:trendveiw/components/text_field.dart';
@@ -15,17 +14,24 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // Instance of AuthService to handle user authentication logic
   final AuthService _authService = AuthService();
+
+  // Controller for handling input in the email text field
   final TextEditingController emailController = TextEditingController();
+
+  // Controller for handling input in the password text field
   final TextEditingController passwordController = TextEditingController();
 
+  // Toggles password visibility in the password field
   bool showPassword = false;
-  bool isLoadingGoogleSignIn = false; // Track Google Sign-In loading state
 
+  // Validates user input for email and password fields.
   bool validateInputs() {
     final email = emailController.text;
     final password = passwordController.text;
 
+    // Shows an error dialog if any field is empty, the email format is invalid, or the password is shorter than 6 characters.
     if (email.isEmpty) {
       DialogBox.showErrorDialog(context, 'Please enter your email');
       return false;
@@ -43,77 +49,66 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         'Password must be at least 6 characters',
       );
+      // Returns true if all inputs are valid; otherwise, returns false.
       return false;
     }
+
     return true;
   }
 
-  Future<void> _signInWithGoogle() async {
-    setState(() {
-      isLoadingGoogleSignIn = true;
-    });
+  // Handles user login:
+  // - Validates input fields
+  // - Attempts to sign in with Firebase Auth
+  // - Checks if the user's email is verified
+  // - Navigates to the main screen if verified
+  // - Shows appropriate error or info dialogs based on the outcome
+  Future<void> handleLogin() async {
+    if (validateInputs()) {
+      try {
+        final userCredential = await _authService.loginUser(
+          emailController.text.trim(),
+          passwordController.text.trim(),
+        );
 
-    try {
-      // Trigger the Google Sign In flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        setState(() {
-          isLoadingGoogleSignIn = false;
-        });
-        return;
-      }
-
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      // Create a new credential
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final userCredential = await _authService.signInWithGoogle(credential);
-
-      if (userCredential != null) {
-        if (userCredential.user?.emailVerified ?? false) {
-          if (mounted) {
-            Navigator.pushNamed(context, '/wrapper');
-          }
-        } else {
-          if (mounted) {
-            DialogBox.showInfoDialog(
-              context,
-              'Email Verification Required',
-              'Please verify your email before logging in.',
-            );
+        if (userCredential != null) {
+          if (userCredential.user?.emailVerified ?? false) {
+            if (mounted) {
+              Navigator.pushNamed(context, '/wrapper');
+            }
+          } else {
+            if (mounted) {
+              DialogBox.showInfoDialog(
+                context,
+                'Email Verification Required',
+                'Please verify your email before logging in.',
+              );
+            }
           }
         }
-      }
-    } on FirebaseAuthException catch (e) {
-      if (mounted) {
-        DialogBox.showErrorDialog(
-          context,
-          'Google Sign-In failed: ${e.message}',
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        DialogBox.showErrorDialog(
-          context,
-          'Google Sign-In failed. Please try again.',
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoadingGoogleSignIn = false;
-        });
+      } on FirebaseAuthException catch (e) {
+        String errorMessage = 'Incorrect email or password';
+
+        if (e.code == 'user-not-found') {
+          errorMessage = 'No user found for that email.';
+        } else if (e.code == 'wrong-password') {
+          errorMessage = 'Incorrect password provided.';
+        } else if (e.code == 'invalid-email') {
+          errorMessage = 'The email address is not valid.';
+        }
+
+        if (mounted) {
+          DialogBox.showErrorDialog(context, errorMessage);
+        }
+      } catch (e) {
+        if (mounted) {
+          DialogBox.showErrorDialog(context, 'An unexpected error occurred.');
+        }
       }
     }
   }
 
   @override
+  // Clean up the controllers when the widget is removed
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
@@ -122,6 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the current theme data from the context.
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -169,6 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     onPressed: () {
                       setState(() {
+                        // Toggles password visibility in the input field
                         showPassword = !showPassword;
                       });
                     },
@@ -182,6 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
+                      // take me to forgot password screen
                       Navigator.pushNamed(context, '/forgot');
                     },
                     child: Text(
@@ -193,99 +191,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
 
                 // Login Button with validation and auth
-                MyButton(
-                  text: 'Login',
-                  onPressed: () async {
-                    if (validateInputs()) {
-                      try {
-                        final userCredential = await _authService.loginUser(
-                          emailController.text.trim(),
-                          passwordController.text.trim(),
-                        );
-
-                        if (userCredential != null) {
-                          if (userCredential.user?.emailVerified ?? false) {
-                            if (mounted) {
-                              Navigator.pushNamed(context, '/wrapper');
-                            }
-                          } else {
-                            if (mounted) {
-                              DialogBox.showInfoDialog(
-                                context,
-                                'Email Verification Required',
-                                'Please verify your email before logging in.',
-                              );
-                            }
-                          }
-                        }
-                      } on FirebaseAuthException catch (e) {
-                        String errorMessage = 'Incorrect email or password';
-
-                        if (e.code == 'user-not-found') {
-                          errorMessage = 'No user found for that email.';
-                        } else if (e.code == 'wrong-password') {
-                          errorMessage = 'Incorrect password provided.';
-                        } else if (e.code == 'invalid-email') {
-                          errorMessage = 'The email address is not valid.';
-                        }
-
-                        if (mounted) {
-                          DialogBox.showErrorDialog(context, errorMessage);
-                        }
-                      } catch (e) {
-                        if (mounted) {
-                          DialogBox.showErrorDialog(
-                            context,
-                            'An unexpected error occurred.',
-                          );
-                        }
-                      }
-                    }
-                  },
-                ),
+                MyButton(text: 'Login', onPressed: handleLogin),
 
                 const SizedBox(height: 20),
-
-                Center(child: Text('OR')),
-
-                const SizedBox(height: 20),
-                // Sign in with Google
-                Center(
-                  child: ElevatedButton(
-                    onPressed: isLoadingGoogleSignIn ? null : _signInWithGoogle,
-                    style: ElevatedButton.styleFrom(minimumSize: Size(200, 50)),
-                    child:
-                        isLoadingGoogleSignIn
-                            ? SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  theme.colorScheme.onPrimary,
-                                ),
-                              ),
-                            )
-                            : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'images/google_logo.png',
-                                  height: 24,
-                                ),
-                                SizedBox(width: 12),
-                                Text('Sign in with Google'),
-                              ],
-                            ),
-                  ),
-                ),
-
-                const SizedBox(height: 50),
 
                 // Create account text
                 Row(
@@ -311,8 +222,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 30),
               ],
             ),
           ),
