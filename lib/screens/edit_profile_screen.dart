@@ -1,14 +1,13 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trendveiw/components/buttton.dart';
 import 'package:trendveiw/components/text_field.dart';
-import 'dart:io'; // For File class
+import 'package:trendveiw/components/dialog_box.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -18,33 +17,54 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-   final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
- /*  final TextEditingController _passwordController = TextEditingController(); */
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // Instance of AuthService to handle user authentication logic
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  File? _selectedImage; // To store the picked image file
- bool _isUploading = false;
-  String? _current64bytes; // To store existing image URL from Firestore
 
- 
-@override
+  // Firebase Firestore instance used to read and write data to the cloud database
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Controller for handling input in the username text field
+  final TextEditingController _usernameController = TextEditingController();
+
+  // Controller for handling input in the email text field
+  final TextEditingController _emailController = TextEditingController();
+
+  // Holds the selected image file from the user's device
+  File? _selectedImage;
+
+  // Stores the base64-encoded string of the selected image
+  String? _current64bytes;
+
+  // Indicates whether a save operation is currently in progress
+  bool _isSaving = false;
+
+  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    getBase64Image();
+    _loadUserData();
   }
 
- 
+  Future<void> _loadUserData() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
 
-   Future<void> _pickImage() async {
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    final data = doc.data();
+
+    setState(() {
+      _usernameController.text = data?['username'] ?? user.displayName ?? '';
+      _emailController.text = user.email ?? '';
+      _current64bytes = data?['profileImageUrl'];
+    });
+  }
+
+  Future<void> _pickImage() async {
     final picker = ImagePicker();
     try {
       final pickedFile = await picker.pickImage(
-        source: ImageSource.gallery, // You can also use ImageSource.camera
+        source: ImageSource.gallery,
+        imageQuality: 80,
         maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
       );
 
       if (pickedFile != null) {
@@ -53,74 +73,48 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image: $e')),
-      );
+      if (!mounted) return;
+      DialogBox.showErrorDialog(context, 'Failed to pick image: $e');
     }
-  }
-
-   Future<Image?> getBase64Image() async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      if (doc.exists && doc.data()?.containsKey('profileImageUrl') == true) {
-        final base64String = doc['profileImageUrl'] as String;
-        final userName = doc['username'];
-        
-setState(() {
-  _current64bytes = base64String;
-  _usernameController.text = user.displayName?? "";
-  _emailController.text = user.email??"";
-});
-
-        
-        
-      }
-    }
-    return null;
   }
 
   Future<void> _saveProfile() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    setState(() => _isSaving = true);
+
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('You must be logged in to save profile')),
-        );
-        return;
-      }
+      String? newBase64Image = _current64bytes;
 
-      /* String? imageUrl = _currentImageUrl; */
-      
-      // Upload new image if selected
       if (_selectedImage != null) {
-        // Read the image file as bytes
-      final bytes = await _selectedImage!.readAsBytes();
-       // Convert to Base64
-      final base64String = base64Encode(bytes);
-       // Save all data to Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .set({
-            'username': _usernameController.text.trim(),
-            'profileImageUrl': base64String,
-            'updatedAt': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
-
-await user.updateDisplayName(
-        _usernameController.text.trim(),
-      );
-        ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully')),
-      );
+        final bytes = await _selectedImage!.readAsBytes();
+        newBase64Image = base64Encode(bytes);
       }
 
-     
+      // Update Firestore
+      await _firestore.collection('users').doc(user.uid).set({
+        'username': _usernameController.text.trim(),
+        'profileImageUrl': newBase64Image,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      // Update FirebaseAuth display name
+      await user.updateDisplayName(_usernameController.text.trim());
+
+      // Update email if changed
+      final newEmail = _emailController.text.trim();
+      if (newEmail != user.email) {
+        await user.verifyBeforeUpdateEmail(newEmail);
+      }
+
+      if (!mounted) return;
+      DialogBox.showSuccessDialog(context, 'Profile updated successfully!');
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving profile: $e')),
-      );
+      if (!mounted) return;
+      DialogBox.showErrorDialog(context, 'Failed to update profile: $e');
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
     }
   }
 
@@ -128,100 +122,88 @@ await user.updateDisplayName(
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
-   /*  _passwordController.dispose(); */
+
     super.dispose();
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
+    // Get the current app theme (light or dark)
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         title: Text(
           'Edit Profile',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontFamily: GoogleFonts.montserrat().fontFamily,
+          style: GoogleFonts.montserrat(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: theme.textTheme.headlineLarge?.color,
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Profile Picture with edit icon
-              Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: _selectedImage != null
-                          ? FileImage(_selectedImage!) // Show selected image
-                          : (_current64bytes != null
-                  ? MemoryImage(base64Decode(_current64bytes?? ""))
-                  : const AssetImage('assets/default_avatar.png')) as ImageProvider, // Default image
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          onPressed: _pickImage,
-                        ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage:
+                        _selectedImage != null
+                            ? FileImage(_selectedImage!)
+                            : (_current64bytes != null
+                                ? MemoryImage(base64Decode(_current64bytes!))
+                                : const AssetImage('assets/default_avatar.png')
+                                    as ImageProvider),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: theme.primaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.white),
+                        onPressed: _pickImage,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 30),
+            ),
+            const SizedBox(height: 30),
+            // username field
+            MyTextField(controller: _usernameController, hintText: 'Username'),
+            const SizedBox(height: 16),
+            // email field
+            MyTextField(controller: _emailController, hintText: 'Email'),
+            const SizedBox(height: 16),
 
-              // Username field
-              MyTextField(
-                controller: _usernameController,
-                hintText: 'Username',
-              ),
-              const SizedBox(height: 20),
+            const SizedBox(height: 30),
 
-              // Email field
-              MyTextField(controller: _emailController, hintText: 'Email', enabled: false,),
-              const SizedBox(height: 20),
-
-              /* // Password field
-              MyTextField(
-                controller: _passwordController,
-                hintText: 'Password',
-              ),
-              const SizedBox(height: 200), */
-
-              // Save button
-              MyButton(
-                text: 'Save',
-                onPressed: () {
-                  // function to save edited profile
-                  _saveProfile();
-                },
-              ),
-            ],
-          ),
+            // save changes button
+            MyButton(
+              text: 'Save Changes',
+              onPressed:
+                  _isSaving
+                      ? () {}
+                      : () {
+                        _saveProfile();
+                        Navigator.pop(context);
+                      },
+            ),
+          ],
         ),
       ),
     );
