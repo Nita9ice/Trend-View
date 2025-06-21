@@ -12,9 +12,13 @@ class VerifyEmailScreen extends StatefulWidget {
 }
 
 class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
+  // Tracks the loading state to show a progress indicator when needed.
   bool isLoading = false;
+
+  // FirebaseAuth instance used for handling user authentication.
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // function to verify user
   Future<void> _checkEmailVerified() async {
     setState(() {
       isLoading = true;
@@ -30,6 +34,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         DialogBox.showSuccessDialog(context, 'Email verified successfully!');
         Future.delayed(const Duration(seconds: 1), () {
           if (!mounted) return;
+          //  after successful verification take me to home screen
           Navigator.pushReplacementNamed(context, '/home');
         });
       } else {
@@ -48,6 +53,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     });
   }
 
+  // resend verification function if email was not previously sent to user
   Future<void> _resendVerificationEmail() async {
     try {
       User? user = _auth.currentUser;

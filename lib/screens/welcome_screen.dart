@@ -38,6 +38,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   : Icons.light_mode,
               color: theme.iconTheme.color,
             ),
+
             onPressed: () {
               themeController.toggleThemeMode();
             },
@@ -58,23 +59,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               child: PageView(
                 controller: _controller,
                 children: const [
+                  // first pageveiw
                   OnboardItem(
                     icon: Icons.trending_up,
                     title: 'Trending Movies',
                     description:
                         'Stay updated with the hottest and most talked-about movies.',
                   ),
+                  // second pageveiw
                   OnboardItem(
                     icon: Icons.category,
                     title: 'Genre Explorer',
                     description:
                         'Browse movies based on your favorite genres and moods.',
                   ),
+                  // third pageveiw
                   OnboardItem(
-                    icon: Icons.bookmark_border,
-                    title: 'Save & Watch Later',
+                    icon: Icons.favorite,
+                    title: 'Add to favourites',
                     description:
-                        'Bookmark movies and create your personalized watchlist.',
+                        'Save items to your favourites for quick access later.',
                   ),
                 ],
               ),
@@ -88,9 +92,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               count: 3,
               effect: WormEffect(
                 dotColor: theme.hintColor.withAlpha((0.7 * 255).round()),
-
-                activeDotColor:
-                    theme.colorScheme.secondary, // RGBA(255, 64, 129, 1)
+                activeDotColor: Color.fromRGBO(255, 64, 129, 1),
                 dotHeight: 10,
                 dotWidth: 10,
               ),
@@ -104,6 +106,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               child: MyButton(
                 text: 'Get Started',
                 onPressed: () {
+                  // take me to login screen
                   Navigator.pushNamed(context, '/login');
                 },
               ),
