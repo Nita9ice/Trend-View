@@ -54,17 +54,14 @@ class ApiCall {
   }
 
   Future<String> getMoviesVideo(int movieId) async {
-    String _urlMoviesVideo =
+    String urlMoviesVideo =
         "https://api.themoviedb.org/3/movie/$movieId/videos?api_key=${ApiKey.apiKey}";
 
     try {
-      var response = await http.get(Uri.parse(_urlMoviesVideo));
+      var response = await http.get(Uri.parse(urlMoviesVideo));
 
       if (response.statusCode == 200) {
         var jsonResponse = (jsonDecode(response.body)['results'] as List);
-
-        print(jsonResponse);
-        // Ensure 'results' exists and is a List
 
         return jsonResponse.map((movie) {
           /* print(movie); */
