@@ -17,47 +17,50 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  // Instance of AuthService to handle user authentication logic
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // FirebaseAuth instance used for handling user authentication.
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
-  // Firebase Firestore instance used to read and write data to the cloud database
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // FirebaseFirestore instance used for managing cloud database operations.
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   // Controller for handling input in the username text field
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
 
   // Controller for handling input in the email text field
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
-  // Holds the selected image file from the user's device
-  File? _selectedImage;
+  // Stores the image file selected by the user from their device.
+  File? selectedImage;
 
-  // Stores the base64-encoded string of the selected image
-  String? _current64bytes;
+  // Stores the base64-encoded version of the selected profile image.
+  String? current64bytes;
 
-  // Indicates whether a save operation is currently in progress
-  bool _isSaving = false;
+  // Indicates whether the profile is currently being saved (used to show loading state).
+  bool isSaving = false;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    // Load user info when screen is initialized
+    loadUserData();
   }
 
-  Future<void> _loadUserData() async {
-    final user = _auth.currentUser;
+  // Fetch existing user data from Firestore and FirebaseAuth
+  Future<void> loadUserData() async {
+    final user = auth.currentUser;
     if (user == null) return;
 
-    final doc = await _firestore.collection('users').doc(user.uid).get();
+    final doc = await firestore.collection('users').doc(user.uid).get();
     final data = doc.data();
 
     setState(() {
-      _usernameController.text = data?['username'] ?? user.displayName ?? '';
-      _emailController.text = user.email ?? '';
-      _current64bytes = data?['profileImageUrl'];
+      usernameController.text = data?['username'] ?? user.displayName ?? '';
+      emailController.text = user.email ?? '';
+      current64bytes = data?['profileImageUrl'];
     });
   }
 
+  // Opens the device gallery for the user to pick a new profile image
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     try {
@@ -69,7 +72,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       if (pickedFile != null) {
         setState(() {
-          _selectedImage = File(pickedFile.path);
+          // Convert path to File
+          selectedImage = File(pickedFile.path);
         });
       }
     } catch (e) {
@@ -78,32 +82,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  // Saves updated profile data to Firebase
   Future<void> _saveProfile() async {
-    final user = _auth.currentUser;
+    final user = auth.currentUser;
     if (user == null) return;
 
-    setState(() => _isSaving = true);
+    setState(() => isSaving = true);
 
     try {
-      String? newBase64Image = _current64bytes;
+      String? newBase64Image = current64bytes;
 
-      if (_selectedImage != null) {
-        final bytes = await _selectedImage!.readAsBytes();
-        newBase64Image = base64Encode(bytes);
+      if (selectedImage != null) {
+        final bytes = await selectedImage!.readAsBytes();
+        newBase64Image = base64Encode(bytes); // Convert image to base64
       }
 
-      // Update Firestore
-      await _firestore.collection('users').doc(user.uid).set({
-        'username': _usernameController.text.trim(),
+      // Save updated username and image to Firestore
+      await firestore.collection('users').doc(user.uid).set({
+        'username': usernameController.text.trim(),
         'profileImageUrl': newBase64Image,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
-      // Update FirebaseAuth display name
-      await user.updateDisplayName(_usernameController.text.trim());
+      // Update FirebaseAuth user display name
+      await user.updateDisplayName(usernameController.text.trim());
 
-      // Update email if changed
-      final newEmail = _emailController.text.trim();
+      // Update FirebaseAuth email (triggers verification)
+      final newEmail = emailController.text.trim();
       if (newEmail != user.email) {
         await user.verifyBeforeUpdateEmail(newEmail);
       }
@@ -114,15 +119,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (!mounted) return;
       DialogBox.showErrorDialog(context, 'Failed to update profile: $e');
     } finally {
-      if (mounted) setState(() => _isSaving = false);
+      if (mounted) setState(() => isSaving = false);
     }
   }
 
   @override
   void dispose() {
-    _usernameController.dispose();
-    _emailController.dispose();
-
+    // Dispose controllers to free memory
+    usernameController.dispose();
+    emailController.dispose();
     super.dispose();
   }
 
@@ -143,7 +148,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed:
+              () => Navigator.pop(
+                context,
+              ), // Return to previous screen (profile screen)
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -152,16 +160,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
+            // Profile image with edit icon overlay
             Center(
               child: Stack(
                 children: [
                   CircleAvatar(
                     radius: 50,
                     backgroundImage:
-                        _selectedImage != null
-                            ? FileImage(_selectedImage!)
-                            : (_current64bytes != null
-                                ? MemoryImage(base64Decode(_current64bytes!))
+                        selectedImage != null
+                            ? FileImage(selectedImage!)
+                            : (current64bytes != null
+                                ? MemoryImage(base64Decode(current64bytes!))
                                 : const AssetImage('assets/default_avatar.png')
                                     as ImageProvider),
                   ),
@@ -175,31 +184,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       child: IconButton(
                         icon: const Icon(Icons.edit, color: Colors.white),
-                        onPressed: _pickImage,
+                        onPressed: _pickImage, // Pick new image from gallery
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 30),
-            // username field
-            MyTextField(controller: _usernameController, hintText: 'Username'),
-            const SizedBox(height: 16),
-            // email field
-            MyTextField(controller: _emailController, hintText: 'Email'),
-            const SizedBox(height: 16),
 
             const SizedBox(height: 30),
 
-            // save changes button
+            // Username input field
+            MyTextField(controller: usernameController, hintText: 'Username'),
+
+            const SizedBox(height: 16),
+
+            // Email input field
+            MyTextField(controller: emailController, hintText: 'Email'),
+
+            const SizedBox(height: 30),
+
+            // Save button (disabled if already saving)
             MyButton(
               text: 'Save Changes',
               onPressed:
-                  _isSaving
-                      ? () {}
+                  isSaving
+                      ? () {} // Do nothing if already saving
                       : () {
                         _saveProfile();
+                        // Go back after saving
                         Navigator.pop(context);
                       },
             ),
