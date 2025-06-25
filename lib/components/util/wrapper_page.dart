@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trendveiw/screens/home_screen.dart';
-import 'package:trendveiw/screens/discovery.dart';
 import 'package:trendveiw/screens/profile_screen.dart';
 import 'package:trendveiw/screens/search_screen.dart';
 
@@ -17,9 +16,11 @@ class _WrapperState extends State<Wrapper> {
 
   // List of screens associated with each bottom navigation item
   List<Widget> selectedIndex = <Widget>[
+    // Home Screen
     HomeScreen(),
-    DiscoveryScreen(),
+    // Search Screen
     SearchScreen(),
+    // Profile Screen
     ProfileScreen(),
   ];
 
@@ -45,13 +46,11 @@ class _WrapperState extends State<Wrapper> {
         selectedItemColor: theme.primaryColor,
         unselectedItemColor: Colors.grey,
         items: const [
+          // Bottom navigation bar for home screen
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.explore),
-            label: 'Discovery',
-          ),
-
+          // Bottom navigation bar for for search screen
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          // Bottom navigation bar for profile screen
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
