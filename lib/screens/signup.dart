@@ -29,30 +29,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Tracks the loading state to show a progress indicator when needed.
   bool isLoading = false;
 
-  // Validates that all input fields (username, email, password) are filled.
-  // Shows an error dialog if any field is empty and returns false.
-  // Returns true if all fields are valid.
+  // function to Validates user input for Username, email and password fields.
   bool validateInputs() {
+    // Validates that all input fields (username, email, password) are filled.
     if (usernameController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.isEmpty) {
+      // Shows an error dialog if any field is empty and returns false.
       DialogBox.showErrorDialog(context, 'Please fill in all fields');
       return false;
     }
+    // Returns true if all fields are valid.
     return true;
   }
 
   // Handles user sign-up process:
-  // - Validates input fields
-  // - Shows loading indicator
-  // - Calls AuthService to register the user with email, password, and username
+
   Future<void> signUp() async {
+    // Validates input fields
     if (!validateInputs()) return;
 
     setState(() {
+      // Shows loading indicator
       isLoading = true;
     });
-
+    //   AuthService to register the user with username, email and password.
     try {
       await AuthService().signupUser(
         emailController.text.trim(),
@@ -60,7 +61,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         usernameController.text.trim(),
       );
 
-      // Wait for dialog to close before navigation
+      // Close the dialog box before nagivation
       if (!mounted) return;
       await showDialog(
         context: context,
@@ -70,7 +71,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               content: const Text('Account created! Please verify your email.'),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(), // Close dialog
+                  // Closes the  dialog box
+                  onPressed: () => Navigator.of(context).pop(),
                   child: const Text('OK'),
                 ),
               ],
@@ -78,25 +80,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
 
       if (mounted) {
+        // Navigate to verify screen after creating account
         Navigator.pushNamed(context, '/verify');
       }
-    } on FirebaseAuthException catch (e) {
+    }
+    // Handle specific Firebase authentication errors during sign up
+    on FirebaseAuthException catch (e) {
+      // Default error message
       String message = 'Sign up failed';
+
       if (e.code == 'email-already-in-use') {
+        // This means the email is already associated with another account
         message = 'Email is already in use.';
       } else if (e.code == 'weak-password') {
+        // This means the password provided is too short or not strong enough
         message = 'Password is too weak.';
       } else if (e.code == 'invalid-email') {
+        // This means the email format is incorrect or not accepted by Firebase
         message = 'Invalid email address.';
       }
+      // this mean if the widget is still part of the widget tree
       if (!mounted) return;
+      // Show an error dialog with the final error message
       DialogBox.showErrorDialog(context, message);
-    } catch (e) {
+    }
+    // Catch any unexpected errors that are not FirebaseAuthExceptions
+    catch (e) {
       if (!mounted) return;
       DialogBox.showErrorDialog(context, 'An unexpected error occurred: $e');
     } finally {
       if (mounted) {
         setState(() {
+          // Stop the loading indicator
           isLoading = false;
         });
       }
@@ -111,7 +126,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -120,6 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 60),
+                // Main text
                 Text(
                   'Create Account',
                   style: GoogleFonts.montserrat(
@@ -129,6 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                // sub text
                 Text(
                   'Join us and enjoy trending movies.',
                   style: GoogleFonts.montserrat(
@@ -137,13 +153,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
+                // username field
                 MyTextField(
                   controller: usernameController,
                   hintText: 'Username',
                 ),
                 const SizedBox(height: 20),
+                // Email field
                 MyTextField(controller: emailController, hintText: 'Email'),
                 const SizedBox(height: 20),
+                // password field
                 MyTextField(
                   controller: passwordController,
                   hintText: 'Password',
@@ -155,18 +174,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     onPressed: () {
                       setState(() {
+                        // Toggles password visibility in the input field
                         showPassword = !showPassword;
                       });
                     },
                   ),
                 ),
                 const SizedBox(height: 50),
+
+                // Show circular progress indicator while signing up, otherwise show the 'Sign Up' button
                 isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : MyButton(text: 'Sign Up', onPressed: signUp),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
 
+                // A horizontal row prompting users to log in if they already have an account
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -178,12 +201,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     TextButton(
                       onPressed: () {
+                        // Navigate back to the login screen.
                         Navigator.pop(context);
                       },
                       child: Text(
                         'Login',
                         style: GoogleFonts.montserrat(
-                          color: theme.colorScheme.primary,
+                          color: Color.fromRGBO(184, 137, 250, 1),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
