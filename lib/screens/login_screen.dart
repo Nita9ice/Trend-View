@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         final userCredential = await _authService.loginUser(
           emailController.text.trim(),
-          passwordController.text.trim(),
+          passwordController.text,
         );
         //  Checks if the user's email is verified
         if (userCredential != null) {
