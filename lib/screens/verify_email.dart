@@ -11,19 +11,17 @@ class VerifyEmailScreen extends StatefulWidget {
   State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
 }
 
-class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
+class _VerifyEmailScreenState extends State<VerifyEmailScreen>
+    with WidgetsBindingObserver {
   // Tracks the loading state to show a progress indicator when needed.
   bool isLoading = false;
 
   // FirebaseAuth instance used for handling user authentication.
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Checks if the user's email has been verified:
-  // - Reloads the current user from Firebase
-  // - If verified, shows a success dialog and navigates to the home screen
-  // - If not verified, shows an error dialog prompting the user to verify
-  // - Handles errors gracefully and updates the loading state
-  Future<void> _checkEmailVerified() async {
+  //Function to  Check if the user's email has been verified:
+  Future<void> checkEmailVerified() async {
+    // Reloads the current user from Firebase
     setState(() {
       isLoading = true;
     });
@@ -33,22 +31,27 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       await user?.reload();
       user = _auth.currentUser;
 
+      // If verified, shows a success dialog and navigates to the wrapper screen
       if (user != null && user.emailVerified) {
         if (!mounted) return;
         DialogBox.showSuccessDialog(context, 'Email verified successfully!');
-        Future.delayed(const Duration(seconds: 1), () {
+        Future.delayed(const Duration(seconds: 2), () {
           if (!mounted) return;
-          //  after successful verification take me to home screen
-          Navigator.pushReplacementNamed(context, '/home');
+          //  after successful verification take me to wrapper screen
+          Navigator.pushReplacementNamed(context, '/wrapper');
         });
-      } else {
+      }
+      // If not verified, shows an error dialog  box prompting the user to verify email
+      else {
         if (!mounted) return;
         DialogBox.showErrorDialog(
           context,
           'Email not verified yet. Please check your inbox and click the verification link.',
         );
       }
-    } catch (e) {
+    }
+    // Catch any unexpected errors that are not FirebaseAuthExceptions and updates the loading state
+    catch (e) {
       DialogBox.showErrorDialog(context, 'Something went wrong: $e');
     }
 
@@ -58,7 +61,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   // resend verification function if email was not previously sent to user
-  Future<void> _resendVerificationEmail() async {
+  Future<void> resendVerificationEmail() async {
     try {
       User? user = _auth.currentUser;
       await user?.sendEmailVerification();
@@ -73,7 +76,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     }
   }
 
-  Future<void> _confirmAndCheckEmail() async {
+  // functino to confirm if user's email have been verified
+  Future<void> confirmAndCheckEmail() async {
     DialogBox.showInfoDialog(
       context,
       'Confirm Verification',
@@ -82,8 +86,30 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
     // After user closes the dialog, proceed to check
     Future.delayed(const Duration(milliseconds: 300), () {
-      _checkEmailVerified();
+      checkEmailVerified();
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Start listening to app lifecycle, the help the app to retain its memory when the user open its gamil app
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    // Stop listening when screen is destroyed
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // When user returns from Gmail or background, check if email is verified
+      checkEmailVerified();
+    }
   }
 
   @override
@@ -99,6 +125,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 60),
+
+              // Main text
               Text(
                 'Verify Your Email',
                 style: theme.textTheme.headlineSmall?.copyWith(
@@ -107,6 +135,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 ),
               ),
               const SizedBox(height: 10),
+
+              // sub text
               Text(
                 'A verification link has been sent to your email.\nPlease check your inbox and click the link.',
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -116,15 +146,19 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
+
+              // Show circular progress indicator while verifying email, otherwise show I have verified my email button
               isLoading
                   ? const CircularProgressIndicator()
                   : MyButton(
                     text: 'I have verified my email',
-                    onPressed: _confirmAndCheckEmail,
+                    onPressed: confirmAndCheckEmail,
                   ),
               const SizedBox(height: 20),
+
+              // button that resend email if previous email was not receive
               TextButton(
-                onPressed: _resendVerificationEmail,
+                onPressed: resendVerificationEmail,
                 child: Text(
                   'Didn\'t receive the email? Resend',
                   style: theme.textTheme.bodyMedium?.copyWith(
