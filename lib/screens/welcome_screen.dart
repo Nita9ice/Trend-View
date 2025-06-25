@@ -40,12 +40,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
 
             onPressed: () {
+              // Toggle between light and dark theme modes when the button is pressed
               themeController.toggleThemeMode();
             },
             tooltip:
                 themeController.isDarkMode
-                    ? 'Switch to Light Mode'
-                    : 'Switch to Dark Mode',
+                    // Show tooltip text depending on current theme mode
+                    ? 'Switch to Light Mode' // If currently in dark mode, suggest switching to light mode
+                    : 'Switch to Dark Mode', // If currently in light mode, suggest switching to dark mode
           ),
         ],
       ),
