@@ -13,12 +13,14 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  // Controller for handling input in the email text field
   final TextEditingController emailController = TextEditingController();
 
   // function to reset password
   Future<void> sendPasswordResetLink() async {
     final email = emailController.text.trim();
 
+    // Check if the email field is empty
     if (email.isEmpty) {
       DialogBox.showInfoDialog(
         context,
@@ -29,26 +31,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     }
 
     try {
+      // Attempt to send a password reset email using the provided email address
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       if (!mounted) return;
+      // Show a success dialog informing the user that the reset link was sent
       DialogBox.showSuccessDialog(
         context,
         'Password reset link sent! Please check your email.',
       );
-    } on FirebaseAuthException catch (e) {
-      String errorMessage = 'Something went wrong';
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No user found with that email.';
-      } else if (e.code == 'invalid-email') {
-        errorMessage = 'Invalid email address.';
-      }
-
-      DialogBox.showErrorDialog(context, errorMessage);
+    } catch (e) {
+      if (!mounted) return;
+      // Catch any unexpected errors that are not FirebaseAuthExceptions
+      DialogBox.showErrorDialog(
+        context,
+        'Something went wrong. Please try again.',
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Get the current app theme (light or dark)
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -60,7 +63,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 60),
-
+              // Main text
               Text(
                 'Forgot Password',
                 style: theme.textTheme.headlineSmall?.copyWith(
@@ -69,7 +72,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-
+              // sub text
               Text(
                 'Enter your email address and we\'ll send you a link to reset your password.',
                 style: theme.textTheme.bodyMedium?.copyWith(
