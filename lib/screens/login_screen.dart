@@ -26,24 +26,27 @@ class _LoginScreenState extends State<LoginScreen> {
   // Toggles password visibility in the password field
   bool showPassword = false;
 
-  // Validates user input for email and password fields.
+  // function to Validates user input for email and password fields.
   bool validateInputs() {
-    final email = emailController.text;
-    final password = passwordController.text;
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
 
-    // Shows an error dialog if any field is empty, the email format is invalid, or the password is shorter than 6 characters.
+    // Check if the email field is empty
     if (email.isEmpty) {
       DialogBox.showErrorDialog(context, 'Please enter your email');
       return false;
     }
+    // Check if the email format is not valid
     if (!email.contains('@')) {
       DialogBox.showErrorDialog(context, 'Please enter a valid email address');
       return false;
     }
+    // Check if the password field is empty
     if (password.isEmpty) {
       DialogBox.showErrorDialog(context, 'Please enter your password');
       return false;
     }
+    // Check if the password is too short
     if (password.length < 6) {
       DialogBox.showErrorDialog(
         context,
@@ -57,22 +60,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Handles user login:
-  // - Validates input fields
-  // - Attempts to sign in with Firebase Auth
-  // - Checks if the user's email is verified
-  // - Navigates to the main screen if verified
-  // - Shows appropriate error or info dialogs based on the outcome
+
   Future<void> handleLogin() async {
+    //  Validates input fields
     if (validateInputs()) {
+      //  Attempts to login with Firebase Auth
       try {
         final userCredential = await _authService.loginUser(
           emailController.text.trim(),
           passwordController.text.trim(),
         );
-
+        //  Checks if the user's email is verified
         if (userCredential != null) {
           if (userCredential.user?.emailVerified ?? false) {
             if (mounted) {
+              //  Navigates to the wrapper screen if verified
               Navigator.pushNamed(context, '/wrapper');
             }
           } else {
@@ -85,15 +87,13 @@ class _LoginScreenState extends State<LoginScreen> {
             }
           }
         }
-      } on FirebaseAuthException catch (e) {
-        String errorMessage = 'Incorrect email or password';
+      }
+      //  Shows error if user credentials is invalid
+      on FirebaseAuthException catch (e) {
+        String errorMessage = '';
 
-        if (e.code == 'user-not-found') {
-          errorMessage = 'No user found for that email.';
-        } else if (e.code == 'wrong-password') {
-          errorMessage = 'Incorrect password provided.';
-        } else if (e.code == 'invalid-email') {
-          errorMessage = 'The email address is not valid.';
+        if (e.code == 'invalid-credential') {
+          errorMessage = 'Email or password is incorrect.';
         }
 
         if (mounted) {
@@ -130,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 60),
+                // Main text
                 Text(
                   'Welcome Back',
                   style: GoogleFonts.montserrat(
@@ -138,6 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: theme.textTheme.headlineLarge?.color,
                   ),
                 ),
+                // sub text
                 const SizedBox(height: 10),
                 Text(
                   'Login to your account',
@@ -172,31 +174,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 10),
-
                 // Forgot password
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      // take me to forgot password screen
+                      // Navigate to forgot password screen
                       Navigator.pushNamed(context, '/forgot');
                     },
                     child: Text(
                       'Forgot Password?',
                       style: GoogleFonts.montserrat(
-                        color: theme.colorScheme.primary,
+                        color: Color.fromRGBO(184, 137, 250, 1),
                       ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 50),
 
                 // Login Button with validation and auth
                 MyButton(text: 'Login', onPressed: handleLogin),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
 
                 // Create account text
                 Row(
@@ -215,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         'Create one',
                         style: GoogleFonts.montserrat(
-                          color: theme.colorScheme.primary,
+                          color: Color.fromRGBO(184, 137, 250, 1),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
