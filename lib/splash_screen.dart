@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/screens/welcome_screen.dart';
 
+// Splash screen that shows app logo and title before navigating to WelcomeScreen
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -26,20 +27,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the current app theme (light or dark)
+    final theme = Theme.of(context);
     return Scaffold(
       // Set background color
-      backgroundColor: const Color.fromRGBO(18, 18, 18, 1),
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // App Icon (TV Icon styled as logo)
-            const Icon(
-              Icons.live_tv_rounded,
-              size: 150,
-              color: Color.fromRGBO(255, 64, 129, 1),
-            ),
+            Icon(Icons.live_tv_rounded, size: 150, color: theme.primaryColor),
 
             const SizedBox(height: 16), // Spacing between icon and text
             // App Title
@@ -48,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 42,
                 fontWeight: FontWeight.bold,
-                color: const Color.fromRGBO(255, 255, 255, 1),
+                color: theme.textTheme.headlineLarge?.color,
               ),
             ),
 
@@ -59,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontStyle: FontStyle.italic,
-                color: const Color.fromRGBO(255, 255, 255, 0.7),
+                color: theme.textTheme.bodyMedium?.color,
               ),
             ),
           ],

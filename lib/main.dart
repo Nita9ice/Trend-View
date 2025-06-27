@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+// App screens and components
 import 'package:trendveiw/components/util/wrapper_page.dart';
 import 'package:trendveiw/screens/favourite_screen.dart';
 import 'package:trendveiw/screens/settings.dart';
@@ -14,10 +15,12 @@ import 'package:trendveiw/screens/profile_screen.dart';
 import 'package:trendveiw/screens/signup.dart';
 import 'package:trendveiw/screens/welcome_screen.dart';
 import 'package:trendveiw/splash_screen.dart';
+// Theme management
 import 'package:trendveiw/theme/theme_controller.dart';
 import 'package:trendveiw/theme/app_theme.dart';
 
 void main() async {
+  // Ensures widgets and Firebase are initialized before app starts
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
@@ -25,6 +28,7 @@ void main() async {
   User? user = FirebaseAuth.instance.currentUser;
   String initialRoute = user == null ? '/splash' : '/wrapper';
 
+  // Run the app and provide ThemeController using Provider
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeController(),
@@ -33,6 +37,7 @@ void main() async {
   );
 }
 
+// Main app widget
 class TrendVeiw extends StatelessWidget {
   final String initialRoute;
 
@@ -40,12 +45,15 @@ class TrendVeiw extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //  Listen to theme mode changes using Provider
     final themeController = Provider.of<ThemeController>(context);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      // first screen to display
       initialRoute: initialRoute,
 
+      // Define app routes
       routes: {
         '/wrapper': (context) => const Wrapper(),
         '/splash': (context) => const SplashScreen(),
@@ -60,6 +68,8 @@ class TrendVeiw extends StatelessWidget {
         '/favourite': (context) => FavouriteScreen(),
         '/settings': (context) => SettingsScreen(),
       },
+
+      // Set theme based on user preference (light/dark)
       themeMode: themeController.themeMode,
       // Use the light theme from AppTheme class
       theme: AppTheme.lightTheme,

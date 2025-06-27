@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:trendveiw/components/buttton.dart';
+import 'package:trendveiw/components/util/buttton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:trendveiw/components/dialog_box.dart';
+import 'package:trendveiw/components/util/dialog_box.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({super.key});

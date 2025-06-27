@@ -5,9 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:trendveiw/components/buttton.dart';
-import 'package:trendveiw/components/text_field.dart';
-import 'package:trendveiw/components/dialog_box.dart';
+import 'package:trendveiw/components/util/buttton.dart';
+import 'package:trendveiw/components/util/text_field.dart';
+import 'package:trendveiw/components/util/dialog_box.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});

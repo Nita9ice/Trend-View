@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:trendveiw/components/buttton.dart';
-import 'package:trendveiw/components/onboard.dart';
+import 'package:trendveiw/components/util/buttton.dart';
+import 'package:trendveiw/components/util/onboard.dart';
 import 'package:trendveiw/theme/theme_controller.dart';
 
 class WelcomeScreen extends StatefulWidget {
