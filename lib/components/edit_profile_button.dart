@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// this is a class for edit profile button
 class EditProfileButton extends StatelessWidget {
+  // property of the class
   final VoidCallback onPressed;
 
+  // initializing the property
   const EditProfileButton({super.key, required this.onPressed});
 
   @override

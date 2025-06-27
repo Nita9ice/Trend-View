@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// This class is created to build reusable and consistent input field styles across the app.
 class CustomInputDecoration {
   static InputDecoration build({required String label, Widget? suffixIcon}) {
     return InputDecoration(

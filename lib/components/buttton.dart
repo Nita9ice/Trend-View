@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// This class is created to make a reusable button keeep my code neat and clean
 class MyButton extends StatelessWidget {
+  // properties for this class
   final String text;
   final VoidCallback onPressed;
   final Color backgroundColor;
@@ -9,6 +11,7 @@ class MyButton extends StatelessWidget {
   final EdgeInsets padding;
 
   const MyButton({
+    // initializing the properties
     super.key,
     required this.text,
     required this.onPressed,

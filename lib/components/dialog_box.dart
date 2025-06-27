@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+// This class is created to show reusable success, error, and info dialog boxes in the app.
 class DialogBox {
-  // Show success dialog
+  // function to Show success dialog
   static void showSuccessDialog(BuildContext context, String message) {
     showDialog(
       context: context,
@@ -20,7 +21,7 @@ class DialogBox {
     );
   }
 
-  // Show error dialog
+  //function to Show error dialog
 
   static void showErrorDialog(BuildContext context, String message) {
     showDialog(
@@ -40,7 +41,7 @@ class DialogBox {
     );
   }
 
-  // Show general info dialog
+  // function to Show general info dialog
   static void showInfoDialog(
     BuildContext context,
     String title,

@@ -23,7 +23,7 @@ class ProfileOptionTile extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        //  uses red color if it's a favorite icon, otherwise uses the theme's default icon color
+        //  uses red color if it's a favorite icon, otherwise uses the theme's default icon color.
         color:
             icon == Icons.favorite
                 ? Color.fromRGBO(231, 63, 63, 1)

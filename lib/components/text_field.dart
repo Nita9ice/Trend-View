@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MyTextField extends StatelessWidget {
+  // properties for this class
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
   final Widget? suffixIcon;
-final bool? enabled;
+  final bool? enabled;
+
+  // initializing the properties
   const MyTextField({
     super.key,
     required this.controller,
@@ -17,6 +20,7 @@ final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
+    // Get the current app theme (light or dark)
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return TextField(

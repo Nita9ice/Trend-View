@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// This class is created to display a single onboarding screen item with an icon, title, and description.
 class OnboardItem extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -14,6 +15,7 @@ class OnboardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the current app theme (light or dark)
     final theme = Theme.of(context);
 
     return Padding(
@@ -21,11 +23,7 @@ class OnboardItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 80,
-            color: theme.iconTheme.color, // Adaptive icon color
-          ),
+          Icon(icon, size: 80, color: theme.iconTheme.color),
           const SizedBox(height: 20),
           Text(
             title,
