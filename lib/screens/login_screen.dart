@@ -75,7 +75,9 @@ class _LoginScreenState extends State<LoginScreen> {
           if (userCredential.user?.emailVerified ?? false) {
             if (mounted) {
               //  Navigates to the wrapper screen if verified
+               Navigator.pop(context);
               Navigator.pushNamed(context, '/wrapper');
+             
             }
           } else {
             if (mounted) {
