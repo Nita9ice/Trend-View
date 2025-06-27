@@ -1,20 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   // Sign up  or create account with email and password
-  Future<UserCredential?> signupUser(String email, String password, String username) async {
+  Future<UserCredential?> signupUser(
+    String email,
+    String password,
+    String username,
+  ) async {
     try {
-      final userCredential = await _auth.createUserWithEmailAndPassword(
+      final userCredential = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-       // Update display name (username)
-      await userCredential.user?.updateDisplayName(
-        username
-      );
+      // Update display name (username)
+      await userCredential.user?.updateDisplayName(username);
 
       // Send email verification
       await userCredential.user?.sendEmailVerification();
@@ -28,11 +30,10 @@ class AuthService {
   // Sign in or login  with email and password
   Future<UserCredential?> loginUser(String email, String password) async {
     try {
-      final userCredential = await _auth.signInWithEmailAndPassword(
+      final userCredential = await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      
 
       return userCredential;
     } catch (e) {
@@ -43,7 +44,7 @@ class AuthService {
   // forgot password (Send password reset email)
   Future<void> resetPassword(String email) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email);
+      await auth.sendPasswordResetEmail(email: email);
     } catch (e) {
       rethrow;
     }
@@ -51,30 +52,12 @@ class AuthService {
 
   // Sign out user or logout
   Future<void> signoutUser() async {
-    await _auth.signOut();
+    await auth.signOut();
   }
 
   // Get current user
-  User? get currentUser => _auth.currentUser;
+  User? get currentUser => auth.currentUser;
 
   // Listen to auth state changes
-  Stream<User?> get authChanges => _auth.authStateChanges();
-
-
-
-  Future<UserCredential?> signInWithGoogle(credential) async {
-    try {
-      
-
-      // Sign in to Firebase with the Google credential
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
-
-return userCredential;
-      
-    } catch (e) {
-      /* print('Error signing in with Google: $e'); */
-      return null;
-      
-    }
-  }
+  Stream<User?> get authChanges => auth.authStateChanges();
 }
