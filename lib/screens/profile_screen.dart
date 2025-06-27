@@ -4,8 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trendveiw/components/edit_profile_button.dart';
-import 'package:trendveiw/components/profile_options_tile.dart';
+import 'package:trendveiw/components/util/edit_profile_button.dart';
+import 'package:trendveiw/components/util/profile_options_tile.dart';
+
 import 'package:trendveiw/theme/app_theme.dart';
 import 'package:trendveiw/theme/theme_controller.dart';
 
