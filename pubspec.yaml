@@ -47,6 +47,12 @@ dependencies:
   image_picker: ^1.1.2
   provider: ^6.1.5
   google_sign_in: ^6.3.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "images/Movie_Vibes_Logo.png"
 
 dev_dependencies:
   flutter_test:
@@ -71,8 +77,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-    # - images/
+  assets:
+    - images/
     # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

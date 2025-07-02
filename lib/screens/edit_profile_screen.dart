@@ -171,7 +171,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ? FileImage(selectedImage!)
                             : (current64bytes != null
                                 ? MemoryImage(base64Decode(current64bytes!))
-                                : const AssetImage('assets/default_avatar.png')
+                                : const AssetImage('images/default_user.png')
                                     as ImageProvider),
                   ),
                   Positioned(

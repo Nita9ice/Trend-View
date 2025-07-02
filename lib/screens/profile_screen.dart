@@ -91,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               backgroundImage:
                   (_current64bytes != null
                           ? MemoryImage(base64Decode(_current64bytes ?? ""))
-                          : const AssetImage('assets/default_avatar.png'))
+                          : const AssetImage("images/default_user.png"))
                       as ImageProvider,
             ),
             const SizedBox(height: 10),
