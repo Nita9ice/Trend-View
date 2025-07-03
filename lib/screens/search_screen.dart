@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:trendveiw/API/api_call.dart';
 import 'package:trendveiw/components/Widget/movie_slide.dart';
 import 'package:trendveiw/model/movie_model.dart';
+import 'package:trendveiw/components/util/dialog_box.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -12,12 +13,17 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final TextEditingController _searchController = TextEditingController();
+  // Controller to manage the search input field
+  final TextEditingController searchController = TextEditingController();
+
+  // Holds the future result from the API call
   Future<List<Movie>>? searchResults;
 
   @override
   Widget build(BuildContext context) {
+    // Get current theme data for styling based on light/dark mode
     final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Container(
@@ -30,38 +36,60 @@ class _SearchScreenState extends State<SearchScreen> {
             borderRadius: BorderRadius.circular(30),
           ),
           child: TextField(
-            controller: _searchController,
+            controller: searchController,
             style: theme.textTheme.bodyLarge,
             decoration: InputDecoration(
               hintText: 'Search movies...',
               hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.iconTheme.color?.withOpacity(0.5),
+                color: theme.iconTheme.color?.withAlpha(140),
               ),
               border: InputBorder.none,
               suffixIcon: IconButton(
+                // Trigger search when search icon is pressed
                 onPressed: () {
-                  setState(() {
-                    searchResults = ApiCall().searchMovies(
-                      _searchController.text,
+                  final query = searchController.text.trim();
+                  if (query.isEmpty) return;
+
+                  try {
+                    // Call search API and update the UI
+                    setState(() {
+                      searchResults = ApiCall().searchMovies(query);
+                    });
+                  } catch (e) {
+                    // Show error dialog if search fails
+                    DialogBox.showErrorDialog(
+                      context,
+                      'Something went wrong during search',
                     );
-                  });
+                  }
                 },
                 icon: Icon(Icons.search),
-                color: theme.iconTheme.color?.withOpacity(0.7),
+                color: theme.iconTheme.color?.withAlpha(140),
               ),
             ),
+            // Trigger search when the user submits via keyboard
             onSubmitted: (query) {
               if (query.isNotEmpty) {
-                setState(() {
-                  searchResults = ApiCall().searchMovies(query.trim());
-                });
+                try {
+                  setState(() {
+                    searchResults = ApiCall().searchMovies(query.trim());
+                  });
+                } catch (e) {
+                  DialogBox.showErrorDialog(
+                    context,
+                    'Something went wrong during search',
+                  );
+                }
               }
             },
           ),
         ),
       ),
+
+      // Main body: shows message, loading, results, or error
       body:
           searchResults == null
+              // Show message before any search is performed
               ? Center(
                 child: Text(
                   'Search for movies',
@@ -71,32 +99,42 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ),
               )
+              // Handle future data from the search API
               : FutureBuilder(
                 future: searchResults,
                 builder: (context, snapshot) {
+                  // Show loading spinner while waiting for data
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasData) {
-                    // ignore: avoid_print
-                    print('search results: ${snapshot.data}');
-                    // ignore: avoid_print
-                    print('Number of results: ${snapshot.data!.length}');
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  // When data is received
+                  else if (snapshot.hasData) {
+                    // Show message if no movies match the query
                     if (snapshot.data!.isEmpty) {
-                      return Text('No movies found');
+                      return const Text('No movies found');
                     } else {
+                      // Show search results using custom MovieSlide widget
                       return MovieSlide(
                         heading: 'Search Results',
                         snapshot: snapshot,
                       );
                     }
-                  } else if (snapshot.hasError) {
-                    // ignore: avoid_print
-                    print('Error:${snapshot.error}');
-                    return Text('Error:${snapshot.error}');
-                  } else {
-                    // ignore: avoid_print
-                    print('Unknown error');
-                    return Text('Unknown error');
+                  }
+                  // If there's an error, show it using a dialog
+                  else if (snapshot.hasError) {
+                    DialogBox.showErrorDialog(
+                      context,
+                      'An error occurred: ${snapshot.error}',
+                    );
+                    return const SizedBox(); // Return empty widget after dialog
+                  }
+                  // Fallback for unknown error states
+                  else {
+                    DialogBox.showErrorDialog(
+                      context,
+                      'Unknown error occurred during search.',
+                    );
+                    return const SizedBox(); // Return empty widget after dialog
                   }
                 },
               ),
