@@ -7,9 +7,11 @@ import 'package:trendveiw/model/movie_model.dart';
 import 'package:trendveiw/screens/movie_screen.dart';
 import 'package:trendveiw/screens/search_screen.dart';
 
+// HomeScreen StatefulWidget displays categorized movie content
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
 
+  // Movie categories shown in horizontal chips
   final List<String> categories = [
     'Trending',
     'Action',
@@ -24,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Future variables for different movie categories
   late Future<List<Movie>> trendingMovies;
   late Future<List<Movie>> topRatedMovies;
   late Future<List<Movie>> upcomingMovies;
@@ -34,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Movie>> sciFiMovies;
   Future<List<Movie>>? searchResults;
 
+  // Initialize API calls when the widget is created
   @override
   void initState() {
     super.initState();
@@ -47,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     sciFiMovies = ApiCall().getSciFiMovies();
   }
 
+  // Duplicate category list
   final List<String> categories = [
     'Trending',
     'Action',
@@ -58,10 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the current app theme (light or dark)
     final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
+        // Removes back button
         automaticallyImplyLeading: false,
         title: Text(
           'TrendVeiw',
@@ -83,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               const SizedBox(height: 24),
 
-              // Categories horizontal list
+              // Horizontal scrollable category chips
               FutureBuilder(
                 future: Future.wait([
                   trendingMovies,
@@ -106,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
+                              // Navigate to detailed MovieScreen when a chip is tapped
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -141,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 16),
 
-              //Trending
+              // Trending section header with search icon
               Row(
                 children: [
                   Text(
@@ -154,19 +161,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Spacer(),
                   IconButton(
                     onPressed: () {
+                      // Navigate to search screen
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => SearchScreen()),
                       );
                     },
                     icon: const Icon(Icons.search),
-                    color: theme.iconTheme.color?.withOpacity(0.7),
+                    color: theme.iconTheme.color?.withAlpha(140),
                   ),
                 ],
               ),
 
               const Divider(),
 
+              // Display trending movies
               FutureBuilder(
                 future: trendingMovies,
                 builder: (context, snapshot) {
@@ -185,6 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 20),
 
+              // Top Rated Section
               Text(
                 'Top Rated Movies',
                 style: theme.textTheme.titleLarge?.copyWith(
@@ -195,6 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const Divider(),
 
+              // Display top-rated movies
               FutureBuilder(
                 future: topRatedMovies,
                 builder: (context, snapshot) {
@@ -211,6 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
 
+              // Upcoming Section
               Text(
                 'Upcoming Movies',
                 style: theme.textTheme.titleLarge?.copyWith(
@@ -221,6 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const Divider(),
 
+              // Display upcoming movies
               FutureBuilder(
                 future: upcomingMovies,
                 builder: (context, snapshot) {
@@ -238,7 +251,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               SizedBox(height: 10),
-              //Action Movies
+
+              // Action Movies
               Text(
                 "Action Movies",
                 style: GoogleFonts.aBeeZee(
@@ -262,8 +276,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
+
               SizedBox(height: 10),
-              //Comedy Movies
+
+              // Comedy Movies
               Text(
                 "Comedy Movies",
                 style: GoogleFonts.aBeeZee(
@@ -287,8 +303,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
+
               SizedBox(height: 10),
-              //Drama Movies
+
+              // Drama Movies
               Text(
                 "Drama Movies",
                 style: GoogleFonts.aBeeZee(
@@ -312,8 +330,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
+
               SizedBox(height: 10),
-              //Horror Movies
+
+              // Horror Movies
               Text(
                 "Horror Movies",
                 style: GoogleFonts.aBeeZee(
@@ -337,8 +357,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
+
               SizedBox(height: 10),
-              //Sci-Fi Movies
+
+              // Sci-Fi Movies
               Text(
                 "Sci-Fi Movies",
                 style: GoogleFonts.aBeeZee(
