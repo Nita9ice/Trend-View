@@ -74,9 +74,12 @@ class _LoginScreenState extends State<LoginScreen> {
         if (userCredential != null) {
           if (userCredential.user?.emailVerified ?? false) {
             if (mounted) {
-              Navigator.pop(context);
               //  Navigates to the wrapper screen if verified
-              Navigator.pushNamed(context, '/wrapper');
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/wrapper', //main screen after login
+                (Route<dynamic> route) => false, // removes all previous routes
+              );
             }
           } else {
             if (mounted) {
